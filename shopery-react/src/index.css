@@ -27,6 +27,16 @@ a {
   text-decoration: none; /* убираем подчеркивание ссылок */
 }
 
+.wrapper{
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main{
+  flex-grow:1;
+}
+
 .container{
   max-width: 1300px;
   padding: 0 10px;
@@ -95,11 +105,127 @@ a {
 
 .menuList__item-link{
   opacity: 1;
-  transition: opacity .5s ease;
+  transition: all .5s ease;
   font-size: 14px;
   font-weight: 500;
 }
 
 .menuList__item-link:hover{
   opacity: 0.5;
+}
+
+.menuList__item-linkActive{
+  color:#00B207;
+}
+
+
+.sectionTop__top{
+  margin-top: 24px;
+  padding: 182px 0 246px 50px;
+  background-image: url('../public/images/sectionTop/Hero.png');
+  background-position: right;
+}
+
+.sectionTop__subtitle{
+  font-size: 14px;
+  font-weight: 500;
+  color:#00B207;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+
+.sectionTop__title{
+  font-size: 54px;
+  font-weight: 600;
+  line-height: 1.2;
+  color:#1A1A1A;
+  max-width: 600px;
+  margin-bottom: 15px;
+}
+
+.sectionTop__desc{
+  font-size: 24px;
+  font-weight: 400;
+  color:#1A1A1A;
+  margin-bottom: 12px;
+}
+.sectionTop__desc-orange{
+  text-transform: uppercase;
+  color:#FF8A00;
+  font-weight: 600;
+}
+.sectionDesc__text{
+  font-size: 14px;
+  font-weight: 400;
+  color: #808080;
+  margin-bottom: 32px;
+}
+.sectionTop__link{
+  background-color: #00B207;
+  border-radius: 50px;
+  display: flex;
+  align-items: center;
+  gap:14px;
+  max-width: 191px;
+  transition:all 1s ease;
+  padding: 16px 40px;
+}
+.sectionTop__link-text{
+  font-size: 16px;
+  font-weight: 600;
+  color:#fff;
+}
+
+.sectionTop__link:hover{
+  background-color: #1c8f1f;
+}
+
+.sectionTop__link:hover .sectionTop__link-img{
+  animation: arrow 1s ease infinite;
+}
+
+@keyframes arrow {
+  0%{
+    transform: translateX(0);
+  }
+  50%{
+    transform: translateX(100%);
+  }
+  70%{
+    transform: translateX(-30%);
+  } 
+  80%{
+    transform: translateX(30%);
+  } 
+  100%{
+    transform: translateX(0);
+  }
+} 
+
+.sectionTop__bottom{
+  margin-top: 24px;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0px 8px 40px 0px rgba(0,38,3,0.08); /* параметры для box-shadow указываются так,значения по порядку, offset-x(по x) | offset-y(по y) | blur-radius | spread-radius | color */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap:5px;
+  margin-bottom: 100px;
+}
+
+.sectionTop__bottom-item{
+  display: flex;
+  align-items: center;
+  gap:16px;
+}
+.item__textBlock-title{
+  font-size: 16px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+.item__textBlock-desc{
+  font-size: 14px;  
+  font-weight: 400;
+  color:#999999;
 }
