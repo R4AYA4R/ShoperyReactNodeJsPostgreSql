@@ -229,3 +229,164 @@ a {
   font-weight: 400;
   color:#999999;
 }
+
+.sectionDeals{
+  background-color: #F7F7F7;
+  margin-bottom: 60px;
+}
+
+.sectionDeals__top{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 27px;
+}
+
+.sectionDeals__top-link{
+  display: flex;
+  align-items: center;
+  gap:12px;
+  transition:all 1s ease;
+  opacity: 1;
+}
+
+.sectionDeals__top-link:hover{
+  opacity: 0.7;
+}
+
+.sectionDeals__top-link:hover .sectionDeals__top-linkImg{
+  animation: arrow 1s ease infinite;
+}
+
+.sectionDeals__top-linkText{
+  font-size: 16px;
+  font-weight: 500;
+  color:#00B207;
+}
+
+.sectionDeals__deals{
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  border:1px solid #E6E6E6;
+  background-color: #fff;
+}
+
+.sectionDeals__deals-item{
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  transition:opacity .5s ease;
+  opacity: 1;
+}
+
+.sectionDeals{
+  padding: 60px 0;
+}
+
+.sectionDeals__deals-item:hover{
+  border:1px solid #2C742F;
+  cursor:pointer;
+  opacity: 0.7;
+  box-shadow: 0px 0px 12px 0px rgba(32,181,38,0.32);
+}
+
+
+.sectionDeals__deals-itemBorderLeft{
+  border-left:1px solid #E6E6E6;
+}
+.sectionDeals__deals-itemBorderTopRight{
+  border-right: 1px solid #E6E6E6;
+  border-top: 1px solid #E6E6E6;
+}
+.sectionDeals__deals-itemBorderTop{
+  border-top: 1px solid #E6E6E6;
+}
+.deals__item-img{
+  align-self:center;
+}
+.deals__item-text{
+  font-size: 14px;
+  font-weight: 400;
+  color:#4D4D4D;
+}
+.deals__item-price{
+  font-size: 16px;
+  font-weight: 500;
+  color:#1A1A1A;
+}
+
+.sectionDiscountBanner{
+  margin-bottom: 60px;
+}
+
+.sectionDiscountBanner__inner{
+  padding: 60px;
+  background-image: url('../public/images/sectionDiscountBanner/Discount\ Bannar.png');
+  background-repeat: no-repeat;
+  background-size: cover;
+  display: flex;
+  justify-content: end;
+  border-radius: 10px;
+}
+
+.sectionDiscountBanner__sale-title{
+  font-size: 16px;
+  font-weight: 500;
+  color:#fff;
+  text-transform: uppercase;
+}
+
+.sectionDiscountBanner__sale-subtitle{
+  text-transform: uppercase;
+  font-size: 48px;
+  color:#fff;
+  margin-bottom: 16px;
+}
+
+.sale__subtitle-span{
+  color:#FF8A00;
+  margin-right: 10px;
+}
+
+.sectionDiscountBanner__sale-desc{
+  font-size: 16px;
+  font-weight: 400;
+  color:#fff;
+  max-width: 441px;
+  margin-bottom: 28px;
+}
+
+.popularProducts{
+  margin-bottom: 60px;
+}
+
+.popularProducts__products{
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  border:1px solid #E6E6E6;
+}
+
+.sectionBrands{
+  padding-bottom: 60px;
+}
+
+.sectionBrands__item-span{
+  display: block;
+  height: 32px;
+  width: 2px;
+  background-color: #E6E6E6;
+}
+
+.sectionBrands__inner{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sectionBrands__item{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-right: 1px solid #E6E6E6;
+  padding-right: 80px;
+}

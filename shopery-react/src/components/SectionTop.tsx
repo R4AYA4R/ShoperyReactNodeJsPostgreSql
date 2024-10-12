@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 
 const SectionTop = () => {
     return (
@@ -10,10 +11,10 @@ const SectionTop = () => {
                             Organic Food</h1>
                         <p className="sectionTop__desc">Sale up to <span className="sectionTop__desc-orange">30% OFF</span></p>
                         <p className="sectionDesc__text">Free shipping on all your order. we deliver, you enjoy</p>
-                        <a href="#" className="sectionTop__link">
+                        <Link to="/catalog" className="sectionTop__link">
                             <p className="sectionTop__link-text">Shop now</p>
                             <img src="/images/sectionTop/Group.png" alt="" className="sectionTop__link-img" />
-                        </a>
+                        </Link>
                     </div>
                     <div className="sectionTop__bottom">
                         <div className="sectionTop__bottom-item">
