@@ -9,6 +9,7 @@ import Cart from "./pages/Cart";
 import UserPage from "./pages/UserPage";
 import ProductItemPage from "./pages/ProductItemPage";
 import ScrollToTop from "./utils/ScrollToTop";
+import Footer from "./components/Footer";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
 
             <Route path="/*" element={<Navigate to='/' />}/> {/* если пользователь введет в url несуществующую страницу,то его перекинет на главную */}
           </Routes>
+          <Footer/>
         </div>
       </BrowserRouter>
     </>
