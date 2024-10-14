@@ -6,10 +6,14 @@ import { IProduct } from "../types/types";
 
 const SectionDeals = () => {
 
+    // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
     const {data} = useQuery({
         queryKey:['getAllProducts'],
         queryFn:async ()=>{
             const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts'); // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
+
+            
+            console.log(response.data);
 
             return response;
         }

@@ -44,26 +44,31 @@ const start = async () => {
         app.listen(PORT,() => console.log(`Server started on PORT = ${PORT}`)); // запускаем сервер,говоря ему прослушивать порт 5000(указываем первым параметром у listen() нашу переменную PORT) с помощью listen(),и вторым параметром указываем функцию,которая выполнится при успешном запуске сервера
 
 
-        // это делаем тестово 1 раз,чтобы создать объекты в таблицах базы данных PostgreSql и потом их использовать
-        // await models.Product.create({name:'Green Lettuce',price:9,priceFilter:'Under $10',description:"testDescription",amount:1,totalPrice:9,image:"Product Image (1).png" }); // создаем объект в таблице Product,указываем в объекте нужные поля,поле rating не указываем,так как по дефолту он будет 0(мы это прописали при создании модели таблицы Product в файле models.js)
+        // это делаем тестово 1 раз,чтобы создать объекты в таблицах базы данных PostgreSql и потом их использовать,указываем categoryId и tasteId в соответствии с нужными категориями и вкусами,в categoryId указываем id объекта из таблицы category с нужной нам категорией,так мы будем знать,какие товары с какой категорией,для вкуса(tasteId) тоже самое,и потом будем фильтровать объекты товаров по полю categoryId со значением определенного id категории(со значением id объекта из таблицы Category,так мы будем знать,что это за категория) и для вкуса(tasteId) тоже самое 
 
-        // await models.Product.create({name:'Chinese cabbage',price:12,priceFilter:'$10-$20',amount:1,totalPrice:12,image:"Product Image.png" });
+        // await models.Product.create({name:'Green Lettuce',price:9,priceFilter:'Under $10',amount:1,totalPrice:9,image:"Product Image (1).png",categoryId:2,tasteId:1 }); // создаем объект в таблице Product,указываем в объекте нужные поля,поле rating не указываем,так как по дефолту он будет 0(мы это прописали при создании модели таблицы Product в файле models.js)
 
-        // await models.Product.create({name:'Eggplant',price:34,priceFilter:'$30-$50',amount:1,totalPrice:34,image:"Product Image (2).png" });
+        // await models.Product.create({name:'Chinese cabbage',price:12,priceFilter:'$10-$20',amount:1,totalPrice:12,image:"Product Image.png",categoryId:2,tasteId:1});
 
-        // await models.Product.create({name:'Green Capsicum',price:14.99,priceFilter:'$10-$20',amount:1,totalPrice:14.99,image:"Product Image (3).png" });
+        // await models.Product.create({name:'Eggplant',price:34,priceFilter:'$30-$50',amount:1,totalPrice:34,image:"Product Image (2).png",categoryId:3,tasteId:3 });
 
-        // await models.Product.create({name:'Green Chili',price:22.35,priceFilter:'$20-$30',amount:1,totalPrice:22.35,image:"Product Image (4).png" });
+        // await models.Product.create({name:'Green Capsicum',price:14.99,priceFilter:'$10-$20',amount:1,totalPrice:14.99,image:"Product Image (3).png",categoryId:2,tasteId:1 });
 
-        // await models.Product.create({name:'Red Chili',price:24.99,priceFilter:'$20-$30',amount:1,totalPrice:24.99,image:"Product Image (5).png" });
+        // await models.Product.create({name:'Green Chili',price:22.35,priceFilter:'$20-$30',amount:1,totalPrice:22.35,image:"Product Image (4).png",categoryId:1,tasteId:3 });
 
-        // await models.Product.create({name:'Red Tomatoes',price:11,priceFilter:'$10-$20',amount:1,totalPrice:11,image:"Product Image (6).png" });
+        // await models.Product.create({name:'Red Chili',price:24.99,priceFilter:'$20-$30',amount:1,totalPrice:24.99,image:"Product Image (5).png",categoryId:1,tasteId:2 });
 
-        // await models.Product.create({name:'Big Potatoes',price:8,priceFilter:'Under $10',amount:1,totalPrice:8,image:"Product Image (7).png" });
+        // await models.Product.create({name:'Red Tomatoes',price:11,priceFilter:'$10-$20',amount:1,totalPrice:11,image:"Product Image (6).png",categoryId:1,tasteId:1 });
+
+        // await models.Product.create({name:'Big Potatoes',price:8,priceFilter:'Under $10',amount:1,totalPrice:8,image:"Product Image (7).png",categoryId:1,tasteId:1 });
 
         // await models.Category.create({category:"Vegetables"});
+        // await models.Category.create({category:"Beauty & Health"});
+        // await models.Category.create({category:"Cooking"});
 
         // await models.Taste.create({taste:"Sweet"});
+        // await models.Taste.create({taste:"Spicy"});
+        // await models.Taste.create({taste:"Bitter"});
 
     }catch(e){
         console.log(e);

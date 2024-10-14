@@ -1,6 +1,24 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import { Link } from "react-router-dom";
+import { IProduct } from "../types/types";
+import ProductItem from "./ProductItem";
 
 const PopularProducts = () => {
+
+    // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
+    const {data} = useQuery({
+        queryKey:['getAllProductsCategory'],
+        queryFn:async ()=>{
+            const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts?categoryId=1'); // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера),указываем query параметр categoryId со значением 1,чтобы отфильтровать товары по категории у которой id равно 1(это мы прописывали на бэкэнде)
+
+            
+            console.log(response.data);
+
+            return response;
+        }
+    })
+
     return (
         <section className="popularProducts">
             <div className="container">
@@ -13,26 +31,11 @@ const PopularProducts = () => {
                         </Link>
                     </div>
                     <div className="popularProducts__products">
-                        <div className="sectionDeals__deals-item sectionDeals__deals-itemBorderRight">
-                            <img src="/images/sectionDeals/Product Image (1).png" alt="" className="deals__item-img" />
-                            <p className="deals__item-text">Green Lettuce</p>
-                            <p className="deals__item-price">$9.00</p>
-                        </div>
-                        <div className="sectionDeals__deals-item sectionDeals__deals-itemBorderRight">
-                            <img src="/images/sectionDeals/Product Image (3).png" alt="" className="deals__item-img" />
-                            <p className="deals__item-text">Green Capsicum</p>
-                            <p className="deals__item-price">$14.99</p>
-                        </div>
-                        <div className="sectionDeals__deals-item sectionDeals__deals-itemBorderRight">
-                            <img src="/images/sectionDeals/Product Image (4).png" alt="" className="deals__item-img" />
-                            <p className="deals__item-text">Green Chili</p>
-                            <p className="deals__item-price">$34.00</p>
-                        </div>
-                        <div className="sectionDeals__deals-item">
-                            <img src="/images/sectionDeals/Product Image (5).png" alt="" className="deals__item-img" />
-                            <p className="deals__item-text">Red Chili</p>
-                            <p className="deals__item-price">$12.00</p>
-                        </div>
+
+                        {data?.data.map((product)=>
+                            <ProductItem product={product} key={product.id}/>
+                        )}
+
                     </div>
                 </div>
             </div>

@@ -118,6 +118,16 @@ a {
   color:#00B207;
 }
 
+.sectionTop{
+  opacity: 0;
+  transition:all 1s ease;
+  transform:translateX(-50%);
+}
+
+.sectionTop__active{
+  opacity: 1;
+  transform:translateX(0);
+}
 
 .sectionTop__top{
   margin-top: 24px;
