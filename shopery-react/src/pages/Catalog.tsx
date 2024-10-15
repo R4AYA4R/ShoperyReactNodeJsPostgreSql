@@ -1,8 +1,9 @@
+import SectionCatalogTop from "../components/SectionCatalogTop";
 
 const Catalog = ()=>{
     return(
         <main className="main">
-            catalog
+            <SectionCatalogTop/>
         </main>
     )
 }

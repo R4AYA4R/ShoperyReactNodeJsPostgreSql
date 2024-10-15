@@ -1,7 +1,14 @@
+import { useRef } from "react";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const SectionBrands = ()=>{
+
+    const sectionBrandsRef = useRef(null); 
+
+    const onScreen = useIsOnScreen(sectionBrandsRef);
+
     return(
-        <section className="sectionBrands">
+        <section id="sectionBrands" ref={sectionBrandsRef} className={onScreen.sectionBrandsIntersecting ? "sectionBrands sectionBrands__active" : "sectionBrands"}>
             <div className="container">
                 <div className="sectionBrands__inner">
                     <div className="sectionBrands__item">

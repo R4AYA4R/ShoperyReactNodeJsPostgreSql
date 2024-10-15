@@ -3,8 +3,14 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import { IProduct } from "../types/types";
 import ProductItem from "./ProductItem";
+import { useRef } from "react";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const PopularProducts = () => {
+
+    const sectionPopularProductsRef = useRef(null); 
+
+    const onScreen = useIsOnScreen(sectionPopularProductsRef);
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
     const {data} = useQuery({
@@ -20,7 +26,7 @@ const PopularProducts = () => {
     })
 
     return (
-        <section className="popularProducts">
+        <section id="sectionPopularProducts" ref={sectionPopularProductsRef} className={onScreen.sectionPopularProductsIntersecting ? "popularProducts popularProducts__active" : "popularProducts"}>
             <div className="container">
                 <div className="popularProducts__inner">
                     <div className="sectionDeals__top">

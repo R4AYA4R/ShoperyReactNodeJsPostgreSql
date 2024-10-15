@@ -5,7 +5,12 @@ export const useIsOnScreen = (ref)=>{
 
     // создаем состояние для разных состояний для того,чтобы знать,попадает ли html элемент в область observer 
     const [isIntersectingNow,setIsIntersectingNow] = useState({
-        sectionTopIntersecting:false
+        sectionTopIntersecting:false,
+        sectionDealsIntersecting:false,
+        sectionDiscountBannerIntersecting:false,
+        sectionBrandsIntersecting:false,
+        sectionPopularProductsIntersecting:false,
+        sectionCatalogTopIntersecting:false,
     });
 
 
@@ -21,6 +26,41 @@ export const useIsOnScreen = (ref)=>{
                     setIsIntersectingNow((prev)=>({...prev,sectionTopIntersecting:true}));// изменяем состояние текущего наблюдения,возвращая новый объект,куда разворачиваем все предыдущие состония как они и были,только меняем одно состояние для конкретного html элемента(в данном случае sectionTopIntersecting) на true, чтобы не обарачивать все в квадратные скобки и потом не писать return,просто можно обернуть объект в круглые скобки(это тоже самое)
 
                     observer.unobserve(entry.target); // убираем отслеживание текущего элемента,чтобы больше observer не следил за этим элементом
+                }
+                if(entry.target.id === 'sectionDeals'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionDealsIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
+                }
+                if(entry.target.id === 'sectionDiscountBanner'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionDiscountBannerIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
+                }
+                if(entry.target.id === 'sectionBrands'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionBrandsIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
+                }
+                if(entry.target.id === 'sectionPopularProducts'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionPopularProductsIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
+                }
+                if(entry.target.id === 'sectionCatalogTop'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionCatalogTopIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
                 }
 
             }

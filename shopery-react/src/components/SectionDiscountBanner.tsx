@@ -1,8 +1,15 @@
+import { useRef } from "react";
 import { Link } from "react-router-dom";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const SectionDiscountBanner = () => {
+
+    const sectionDiscountBannerRef = useRef(null); 
+
+    const onScreen = useIsOnScreen(sectionDiscountBannerRef);
+
     return(
-        <section className="sectionDiscountBanner">
+        <section id="sectionDiscountBanner" ref={sectionDiscountBannerRef} className={onScreen.sectionDiscountBannerIntersecting ? "sectionDiscountBanner sectionDiscountBanner__active" : "sectionDiscountBanner"}>
             <div className="container">
                 <div className="sectionDiscountBanner__inner">
                     <div className="sectionDiscountBanner__sale">
