@@ -2,83 +2,90 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 
-*, *::before,*::after{
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   padding: 0;
   margin: 0;
 }
 
-*{
-  -webkit-tap-highlight-color: transparent; /* указываем это свойство,чтобы при нажатии кнопок на телефоне задний фон кнопок не изменялся на секунду на синий*/
+* {
+  -webkit-tap-highlight-color: transparent;
+  /* указываем это свойство,чтобы при нажатии кнопок на телефоне задний фон кнопок не изменялся на секунду на синий*/
 }
 
-body{
+body {
   font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 400;
-  overflow-x:hidden; /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
+  overflow-x: hidden;
+  /* указываем это свойство,чтобы все дочерние элементы у элемента body не были видны,если они будут за пределами этого элемента body по оси x(в данном случае указываем это для анимаций,чтобы не было нижнего скролла) */
 }
 
-ul{
-  list-style: none; /* убираем стили списков ul, чтобы они были без точек сбоку и тд */
+ul {
+  list-style: none;
+  /* убираем стили списков ul, чтобы они были без точек сбоку и тд */
 }
 
 a {
-  color:inherit; /* указываем,что цвет ссылок будет таким же,как его родительский элемент */
-  text-decoration: none; /* убираем подчеркивание ссылок */
+  color: inherit;
+  /* указываем,что цвет ссылок будет таким же,как его родительский элемент */
+  text-decoration: none;
+  /* убираем подчеркивание ссылок */
 }
 
-.wrapper{
+.wrapper {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 
-.main{
-  flex-grow:1;
+.main {
+  flex-grow: 1;
 }
 
-.container{
+.container {
   max-width: 1300px;
   padding: 0 10px;
   margin: 0 auto;
 }
 
-.header{
+.header {
   padding: 20px 0;
   border-bottom: 1px solid #E4E7E9;
 }
 
-.logo__img{
+.logo__img {
   max-width: 30px;
 }
 
-.logo{
+.logo {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.logo__text{
-  color:#002603;
+.logo__text {
+  color: #002603;
   font-size: 32px;
   font-weight: 500;
 }
 
-.menuList__item-linkCart{
+.menuList__item-linkCart {
   position: relative;
 }
 
-.menuList__item-spanCart{
+.menuList__item-spanCart {
   position: absolute;
-  right:-5px;
+  right: -5px;
   top: -2px;
   width: 20px;
   height: 20px;
   border-radius: 50%;
   background-color: #2C742F;
   font-size: 10px;
-  color:#fff;
+  color: #fff;
   font-weight: 500;
   border: 1px solid #fff;
   display: flex;
@@ -86,267 +93,283 @@ a {
   align-items: center;
 }
 
-.header__inner{
+.header__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.header__menuList{
+.header__menuList {
   display: flex;
   align-items: center;
   gap: 50px;
 }
 
-.menuList__item-cartAndUser{
+.menuList__item-cartAndUser {
   display: flex;
   align-items: center;
   gap: 20px;
 }
 
-.menuList__item-link{
+.menuList__item-link {
   opacity: 1;
   transition: all .5s ease;
   font-size: 14px;
   font-weight: 500;
 }
 
-.menuList__item-link:hover{
+.menuList__item-link:hover {
   opacity: 0.5;
 }
 
-.menuList__item-linkActive{
-  color:#00B207;
+.menuList__item-linkActive {
+  color: #00B207;
 }
 
-.sectionTop{
+.sectionTop {
   opacity: 0;
-  transition:all 1s ease;
-  transform:translateX(-50%);
+  transition: all 1s ease;
+  transform: translateX(-50%);
 }
 
-.sectionTop__active{
+.sectionTop__active {
   opacity: 1;
-  transform:translateX(0);
+  transform: translateX(0);
 }
 
-.sectionTop__top{
+.sectionTop__top {
   margin-top: 24px;
   padding: 182px 0 246px 50px;
   background-image: url('../public/images/sectionTop/Hero.png');
   background-position: right;
 }
 
-.sectionTop__subtitle{
+.sectionTop__subtitle {
   font-size: 14px;
   font-weight: 500;
-  color:#00B207;
+  color: #00B207;
   margin-bottom: 8px;
   text-transform: uppercase;
 }
 
-.sectionTop__title{
+.sectionTop__title {
   font-size: 54px;
   font-weight: 600;
   line-height: 1.2;
-  color:#1A1A1A;
+  color: #1A1A1A;
   max-width: 600px;
   margin-bottom: 15px;
 }
 
-.sectionTop__desc{
+.sectionTop__desc {
   font-size: 24px;
   font-weight: 400;
-  color:#1A1A1A;
+  color: #1A1A1A;
   margin-bottom: 12px;
 }
-.sectionTop__desc-orange{
+
+.sectionTop__desc-orange {
   text-transform: uppercase;
-  color:#FF8A00;
+  color: #FF8A00;
   font-weight: 600;
 }
-.sectionDesc__text{
+
+.sectionDesc__text {
   font-size: 14px;
   font-weight: 400;
   color: #808080;
   margin-bottom: 32px;
 }
-.sectionTop__link{
+
+.sectionTop__link {
   background-color: #00B207;
   border-radius: 50px;
   display: flex;
   align-items: center;
-  gap:14px;
+  gap: 14px;
   max-width: 191px;
-  transition:all 1s ease;
+  transition: all 1s ease;
   padding: 16px 40px;
 }
-.sectionTop__link-text{
+
+.sectionTop__link-text {
   font-size: 16px;
   font-weight: 600;
-  color:#fff;
+  color: #fff;
 }
 
-.sectionTop__link:hover{
+.sectionTop__link:hover {
   background-color: #1c8f1f;
 }
 
-.sectionTop__link:hover .sectionTop__link-img{
+.sectionTop__link:hover .sectionTop__link-img {
   animation: arrow 1s ease infinite;
 }
 
 @keyframes arrow {
-  0%{
+  0% {
     transform: translateX(0);
   }
-  50%{
+
+  50% {
     transform: translateX(100%);
   }
-  70%{
+
+  70% {
     transform: translateX(-30%);
-  } 
-  80%{
+  }
+
+  80% {
     transform: translateX(30%);
-  } 
-  100%{
+  }
+
+  100% {
     transform: translateX(0);
   }
-} 
+}
 
-.sectionTop__bottom{
+.sectionTop__bottom {
   margin-top: 24px;
   padding: 40px;
   border-radius: 8px;
-  box-shadow: 0px 8px 40px 0px rgba(0,38,3,0.08); /* параметры для box-shadow указываются так,значения по порядку, offset-x(по x) | offset-y(по y) | blur-radius | spread-radius | color */
+  box-shadow: 0px 8px 40px 0px rgba(0, 38, 3, 0.08);
+  /* параметры для box-shadow указываются так,значения по порядку, offset-x(по x) | offset-y(по y) | blur-radius | spread-radius | color */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap:5px;
+  gap: 5px;
   margin-bottom: 100px;
 }
 
-.sectionTop__bottom-item{
+.sectionTop__bottom-item {
   display: flex;
   align-items: center;
-  gap:16px;
+  gap: 16px;
 }
-.item__textBlock-title{
+
+.item__textBlock-title {
   font-size: 16px;
   font-weight: 600;
   color: #1A1A1A;
 }
-.item__textBlock-desc{
-  font-size: 14px;  
+
+.item__textBlock-desc {
+  font-size: 14px;
   font-weight: 400;
-  color:#999999;
+  color: #999999;
 }
 
-.sectionDeals{
+.sectionDeals {
   background-color: #F7F7F7;
   margin-bottom: 60px;
   opacity: 0;
-  transform:translateX(50%);
-  transition:all 1s ease;
+  transform: translateX(50%);
+  transition: all 1s ease;
 }
 
-.sectionDeals__active{
+.sectionDeals__active {
   opacity: 1;
-  transform:translateX(0);
+  transform: translateX(0);
 }
 
-.sectionDeals__top{
+.sectionDeals__top {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 27px;
 }
 
-.sectionDeals__top-link{
+.sectionDeals__top-link {
   display: flex;
   align-items: center;
-  gap:12px;
-  transition:all 1s ease;
+  gap: 12px;
+  transition: all 1s ease;
   opacity: 1;
 }
 
-.sectionDeals__top-link:hover{
+.sectionDeals__top-link:hover {
   opacity: 0.7;
 }
 
-.sectionDeals__top-link:hover .sectionDeals__top-linkImg{
+.sectionDeals__top-link:hover .sectionDeals__top-linkImg {
   animation: arrow 1s ease infinite;
 }
 
-.sectionDeals__top-linkText{
+.sectionDeals__top-linkText {
   font-size: 16px;
   font-weight: 500;
-  color:#00B207;
+  color: #00B207;
 }
 
-.sectionDeals__deals{
+.sectionDeals__deals {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
-  border:1px solid #E6E6E6;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid #E6E6E6;
   background-color: #fff;
 }
 
-.sectionDeals__deals-item{
+.sectionDeals__deals-item {
   padding: 12px;
   display: flex;
   flex-direction: column;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
   opacity: 1;
 }
 
-.sectionDeals{
+.sectionDeals {
   padding: 60px 0;
 }
 
-.sectionDeals__deals-item:hover{
-  border:1px solid #2C742F;
-  cursor:pointer;
+.sectionDeals__deals-item:hover {
+  border: 1px solid #2C742F;
+  cursor: pointer;
   opacity: 0.7;
-  box-shadow: 0px 0px 12px 0px rgba(32,181,38,0.32);
+  box-shadow: 0px 0px 12px 0px rgba(32, 181, 38, 0.32);
 }
 
 
-.sectionDeals__deals-itemBorderRight{
-  border-right:1px solid #E6E6E6;
+.sectionDeals__deals-itemBorderRight {
+  border-right: 1px solid #E6E6E6;
 }
-.sectionDeals__deals-itemBorderTopRight{
+
+.sectionDeals__deals-itemBorderTopRight {
   border-right: 1px solid #E6E6E6;
   border-top: 1px solid #E6E6E6;
 }
-.sectionDeals__deals-itemBorderTop{
+
+.sectionDeals__deals-itemBorderTop {
   border-top: 1px solid #E6E6E6;
 }
-.deals__item-img{
-  align-self:center;
+
+.deals__item-img {
+  align-self: center;
 }
-.deals__item-text{
+
+.deals__item-text {
   font-size: 14px;
   font-weight: 400;
-  color:#4D4D4D;
+  color: #4D4D4D;
 }
-.deals__item-price{
+
+.deals__item-price {
   font-size: 16px;
   font-weight: 500;
-  color:#1A1A1A;
+  color: #1A1A1A;
 }
 
-.sectionDiscountBanner{
+.sectionDiscountBanner {
   margin-bottom: 60px;
   opacity: 0;
-  transform:translateX(-50%);
-  transition:all 1s ease;
+  transform: translateX(-50%);
+  transition: all 1s ease;
 }
 
-.sectionDiscountBanner__active{
+.sectionDiscountBanner__active {
   opacity: 1;
-  transform:translateX(0);
+  transform: translateX(0);
 }
 
-.sectionDiscountBanner__inner{
+.sectionDiscountBanner__inner {
   padding: 60px;
   background-image: url('../public/images/sectionDiscountBanner/Discount\ Bannar.png');
   background-repeat: no-repeat;
@@ -356,77 +379,77 @@ a {
   border-radius: 10px;
 }
 
-.sectionDiscountBanner__sale-title{
+.sectionDiscountBanner__sale-title {
   font-size: 16px;
   font-weight: 500;
-  color:#fff;
+  color: #fff;
   text-transform: uppercase;
 }
 
-.sectionDiscountBanner__sale-subtitle{
+.sectionDiscountBanner__sale-subtitle {
   text-transform: uppercase;
   font-size: 48px;
-  color:#fff;
+  color: #fff;
   margin-bottom: 16px;
 }
 
-.sale__subtitle-span{
-  color:#FF8A00;
+.sale__subtitle-span {
+  color: #FF8A00;
   margin-right: 10px;
 }
 
-.sectionDiscountBanner__sale-desc{
+.sectionDiscountBanner__sale-desc {
   font-size: 16px;
   font-weight: 400;
-  color:#fff;
+  color: #fff;
   max-width: 441px;
   margin-bottom: 28px;
 }
 
-.popularProducts{
+.popularProducts {
   margin-bottom: 60px;
   opacity: 0;
-  transform:translateX(-50%);
-  transition:all 1s ease;
+  transform: translateX(-50%);
+  transition: all 1s ease;
 }
 
-.popularProducts__active{
+.popularProducts__active {
   opacity: 1;
-  transform:translateX(0);
+  transform: translateX(0);
 }
 
-.popularProducts__products{
+.popularProducts__products {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
-  border:1px solid #E6E6E6;
+  grid-template-columns: repeat(4, 1fr);
+  border: 1px solid #E6E6E6;
 }
 
-.sectionBrands{
+.sectionBrands {
   padding-bottom: 60px;
   opacity: 0;
   transform: translateX(50%);
   transition: all 1s ease;
 }
 
-.sectionBrands__active{
+.sectionBrands__active {
   opacity: 1;
   transform: translateX(0);
 }
 
-.sectionBrands__item-span{
+.sectionBrands__item-span {
   display: block;
   height: 32px;
   width: 2px;
   background-color: #E6E6E6;
 }
 
-.sectionBrands__inner{
+.sectionBrands__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.sectionBrands__item{
+.sectionBrands__item {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -434,105 +457,285 @@ a {
   padding-right: 80px;
 }
 
-.footer{
+.footer {
   background-color: #1A1A1A;
-  color:#808080;
+  color: #808080;
 }
 
 
-.footer__logo-text{
+.footer__logo-text {
   font-size: 32px;
   font-weight: 500;
   color: #fff;
 }
 
-.footer__topBlock{
+.footer__topBlock {
   padding: 60px 0;
   display: flex;
   gap: 112px;
   align-items: center;
 }
 
-.footer__leftBlock-telLink{
-  font-size: 14px; 
+.footer__leftBlock-telLink {
+  font-size: 14px;
   font-weight: 500;
-  color:#fff;
+  color: #fff;
   border-bottom: 1px solid #00B207;
   padding-bottom: 6px;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
   opacity: 1;
 }
 
-.footer__leftBlock-telLink:hover{
+.footer__leftBlock-telLink:hover {
   opacity: 0.7;
 }
 
-.footer__leftBlock{
+.footer__leftBlock {
   max-width: 335px;
 }
 
-.footer__leftBlock-desc{
+.footer__leftBlock-desc {
   font-size: 14px;
   font-weight: 400;
-  margin:16px 0px 22px 0;
+  margin: 16px 0px 22px 0;
 }
 
-.footer__menu-list{
+.footer__menu-list {
   display: grid;
-  grid-template-columns: repeat(4,1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 100px;
 }
 
-.footer__list-item{
+.footer__list-item {
   display: flex;
   flex-direction: column;
 }
-.footer__item-title{
-  font-size: 16px;  
+
+.footer__item-title {
+  font-size: 16px;
   font-weight: 500;
   margin-bottom: 20px;
   color: #fff;
 }
 
-.footer__item-link{
+.footer__item-link {
   font-size: 14px;
   font-weight: 400;
   margin-bottom: 12px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
-.footer__item-link:hover{
-  color:#fff;
+
+.footer__item-link:hover {
+  color: #fff;
 }
-.footer__bottomBlock{
-  border-top:1px solid #333333;
+
+.footer__bottomBlock {
+  border-top: 1px solid #333333;
   padding: 30px 0;
   text-align: center;
 }
 
-.sectionCatalogTop{
+.sectionCatalogTop {
   padding: 48px;
   background-image: url('../public/images/sectionCatalogTop/Breadcrumbs.png');
   background-repeat: no-repeat;
   background-position: center;
   margin-bottom: 32px;
   opacity: 0;
-  transform:translateX(-50%);
-  transition:all 1s ease;
+  transform: translateX(-50%);
+  transition: all 1s ease;
 }
 
-.sectionCatalogTop__active{
+.sectionCatalogTop__active {
   opacity: 1;
-  transform:translateX(0);
+  transform: translateX(0);
 }
 
-.sectionCatalogTop__inner{
+.sectionCatalogTop__inner {
   display: flex;
   align-items: center;
-  gap:12px;
+  gap: 12px;
 }
 
-.sectionCatalogTop__text{
-  color:#00B207;
-  font-size:16px;
+.sectionCatalogTop__text {
+  color: #00B207;
+  font-size: 16px;
   font-weight: 400;
+}
+
+.sectionCatalog__inner {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  gap: 24px;
+}
+
+.categories__title {
+  font-size: 20px;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin-bottom: 20px;
+}
+
+.filterBar__categories {
+  border-bottom: 1px solid #CCCCCC;
+  padding-bottom: 20px;
+}
+
+.categories__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: all .5s ease;
+}
+
+.categories__item-radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  /* указываем это свойство,чтобы обрезать видимость элемента и указываем значения в скобках rect() top right bottom left,эти значения указывают расстояние от соответсвующего края элемента,все,что не помещается в эту область будет обрезано и не видно   */
+}
+
+.categories__item-radioStyle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #CCCCCC;
+  border-radius: 50%;
+  transition: all .5s ease;
+}
+
+.categories__item-text {
+  font-size: 14px;
+  font-weight: 400;
+  color: #1A1A1A;
+  margin-left: 28px;
+}
+
+.categories__item:hover .categories__item-radioStyle {
+  border: 1px solid #00B207;
+}
+
+.categories__item-radioStyleActive {
+  border: 1px solid #00B207;
+}
+
+.categories__item-radio:checked+.categories__item-radioStyle::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  background-color: #00B207;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.sectionCatalog__mainBlock-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mainBlock__top-inputBlock {
+  min-width: 450px;
+  position: relative;
+}
+
+.categories__item-amount{
+  font-size: 14px;
+  font-weight: 400;
+  color:#808080;
+}
+
+.mainBlock__top-input {
+  width: 100%;
+  padding: 12px 44px 12px 20px;
+  outline: none;
+  border: 1px solid #CCCCCC;
+  border-radius: 6px;
+}
+
+.mainBlock__top-inputImg {
+  position: absolute;
+  top: 10px;
+  right: 16px;
+}
+
+.mainBlock__top-selectBlock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.selectBlock__text {
+  color: #808080;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.selectBlock__select {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  min-width: 180px;
+  border: 1px solid #E6E6E6;
+  border-radius: 4px;
+  cursor: pointer;
+  min-height: 41px;
+}
+
+.selectBlock__select-inner {
+  position: relative;
+}
+
+.selectBlock__select-img {
+  position: absolute;
+  top: 13px;
+  right: 12px;
+}
+
+.selectBlock__optionsBlock {
+  max-height: 0;
+  position: absolute;
+  top: 45px;
+  left: 0;
+  opacity: 0;
+  background-color: #fff;
+  border-radius: 4px;
+  width: 100%;
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.15);
+  transition: all 1s ease;
+  z-index: -2;
+  overflow: hidden;
+  /* указываем это свойство,чтобы все,что заходит за границы этого блока скрывалось(то есть все элементы,которые в html есть у этого блока), в данном случае,для анимации,когда уменьшаем высоту этого блока,чтобы текст не показывался ниже этого блока */
+}
+
+.select__optionsBlock--active {
+  max-height: 100px;
+  opacity: 1;
+  z-index: 5;
+}
+
+.optionsBlock__item{
+  padding:12px 0 10px 10px;
+  cursor:pointer;
+  transition:all .5s ease;
+}
+
+.optionsBlock__item:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.selectBlock__select-img{
+  transform: rotate(0deg);
+  transition:all .5s ease;
+}
+
+.selectBlock__select-imgActive {
+  transform: rotate(180deg);
 }
