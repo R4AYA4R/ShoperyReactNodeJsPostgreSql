@@ -579,6 +579,7 @@ a {
 .filterBar__categories {
   border-bottom: 1px solid #CCCCCC;
   padding-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .categories__item {
@@ -623,7 +624,7 @@ a {
   border: 1px solid #00B207;
 }
 
-.categories__item-radio:checked+.categories__item-radioStyle::before {
+.categories__item-radio:checked+.categories__item-radioStyleActive::before {
   content: "";
   width: 11px;
   height: 11px;
@@ -646,10 +647,10 @@ a {
   position: relative;
 }
 
-.categories__item-amount{
+.categories__item-amount {
   font-size: 14px;
   font-weight: 400;
-  color:#808080;
+  color: #808080;
 }
 
 .mainBlock__top-input {
@@ -693,6 +694,7 @@ a {
   position: relative;
 }
 
+
 .selectBlock__select-img {
   position: absolute;
   top: 13px;
@@ -721,21 +723,109 @@ a {
   z-index: 5;
 }
 
-.optionsBlock__item{
-  padding:12px 0 10px 10px;
-  cursor:pointer;
-  transition:all .5s ease;
+.optionsBlock__item {
+  padding: 12px 0 10px 10px;
+  cursor: pointer;
+  transition: all .5s ease;
 }
 
 .optionsBlock__item:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
 
-.selectBlock__select-img{
+.selectBlock__select-img {
   transform: rotate(0deg);
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
 .selectBlock__select-imgActive {
   transform: rotate(180deg);
+}
+
+.filterBar__taste {
+  border-bottom: none;
+}
+
+.categories__item-checkBoxStyle {
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #C9CFD2;
+  border-radius: 3px;
+}
+
+.categories__item-checkBoxStyleActive {
+  background-color: #00B207;
+}
+
+.categories__item-checkBoxStyleActive.categories__item-checkBoxStyleActive::before {
+  content: "";
+  width: 20px;
+  height: 20px;
+  background-image: url('../public/images/sectionCatalog/check\ 1.png');
+  background-repeat: no-repeat;
+  background-position: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.sectionCatalog__mainBlock-filters{
+  margin: 24px 0;
+  border-top: 1px solid #CCCCCC;
+  border-bottom: 1px solid #CCCCCC;
+  padding: 16px 0;
+  display: flex;
+  align-items: center;
+  gap:24px;
+}
+
+.mainBlock__filters-text{
+  color:#808080;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.mainBlock__filters-item{
+  display: flex;  
+  align-items: center;
+  gap:8px;
+
+}
+
+
+.filter__item-imgBlock{
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.filters__item-imgActive{
+  display: none;
+}
+
+.filter__item-imgBlock:hover .filters__item-img{
+  display: none;
+}
+
+.filter__item-imgBlock:hover .filters__item-imgActive{
+  display: block;
+  animation: crossImgActive .5s ease forwards;
+}
+
+.filters__item-text{
+  font-size: 14px;
+  font-weight: 500;
+  color: #1A1A1A;
+}
+
+@keyframes crossImgActive {
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
 }
