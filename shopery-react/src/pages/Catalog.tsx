@@ -1,7 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SectionCatalogTop from "../components/SectionCatalogTop";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { IProduct } from "../types/types";
+import ProductItemCatalog from "../components/ProductItemCatalog";
 
 const Catalog = () => {
+
+    const sectionCatalogRef = useRef(null);
+
+    const onScreen = useIsOnScreen(sectionCatalogRef);
+
+    // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
+    const {data} = useQuery({
+        queryKey:['getAllProductsCatalog'],
+        queryFn:async ()=>{
+            const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts'); // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
+
+            
+            console.log(response.data);
+
+            return response;
+        }
+    })
+
 
     const [filterCategories, setFilterCategories] = useState('');
 
@@ -24,7 +47,7 @@ const Catalog = () => {
     return (
         <main className="main">
             <SectionCatalogTop />
-            <section className="sectionCatalog">
+            <section className={onScreen.sectionCatalogIntersecting ? "sectionCatalog sectionCatalog__active" : "sectionCatalog"} id="sectionCatalog" ref={sectionCatalogRef}>
                 <div className="container">
                     <div className="sectionCatalog__inner">
                         <div className="sectionCatalog__filterBar">
@@ -193,7 +216,13 @@ const Catalog = () => {
                                     </div>
                                 }
 
+                            </div>
 
+                            <div className="sectionCatalog__mainBlock-products">
+
+                                {data?.data.map((product)=>
+                                    <ProductItemCatalog product={product} key={product.id}/>
+                                )}
 
                             </div>
                         </div>

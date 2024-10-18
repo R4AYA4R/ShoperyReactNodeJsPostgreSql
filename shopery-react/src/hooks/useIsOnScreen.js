@@ -11,6 +11,7 @@ export const useIsOnScreen = (ref)=>{
         sectionBrandsIntersecting:false,
         sectionPopularProductsIntersecting:false,
         sectionCatalogTopIntersecting:false,
+        sectionCatalogIntersecting:false,
     });
 
 
@@ -58,6 +59,13 @@ export const useIsOnScreen = (ref)=>{
                 if(entry.target.id === 'sectionCatalogTop'){
                     
                     setIsIntersectingNow((prev)=>({...prev,sectionCatalogTopIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
+                }
+                if(entry.target.id === 'sectionCatalog'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionCatalogIntersecting:true}));
 
                     observer.unobserve(entry.target);
 

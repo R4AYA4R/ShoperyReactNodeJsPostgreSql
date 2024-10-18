@@ -50,7 +50,7 @@ const start = async () => {
 
         // await models.Product.create({name:'Chinese cabbage',price:12,priceFilter:'$10-$20',amount:1,totalPrice:12,image:"Product Image.png",categoryId:2,tasteId:1});
 
-        // await models.Product.create({name:'Eggplant',price:34,priceFilter:'$30-$50',amount:1,totalPrice:34,image:"Product Image (2).png",categoryId:3,tasteId:3 });
+        // await models.Product.create({name:'Eggplant',price:34,priceFilter:'Above $30',amount:1,totalPrice:34,image:"Product Image (2).png",categoryId:3,tasteId:3 });
 
         // await models.Product.create({name:'Green Capsicum',price:14.99,priceFilter:'$10-$20',amount:1,totalPrice:14.99,image:"Product Image (3).png",categoryId:2,tasteId:1 });
 
