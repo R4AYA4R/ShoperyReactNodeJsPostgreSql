@@ -37,9 +37,28 @@ const Catalog = () => {
             // выносим url на получение товаров в отдельную переменную,чтобы ее потом изменять
             let url = `http://localhost:5000/api/getProductsCatalog?name=${searchValue}`;
 
-            // если filterCategories не равно пустой строке(то есть пользователь выбрал категорию),то добавляем к url для получения товаров еще query параметр с categoryId и значением как filterCategories
+            // если filterCategories не равно пустой строке(то есть пользователь выбрал категорию),то добавляем к url для получения товаров еще query параметр с categoryId и значением как filterCategories, указываем знак амперсанта & для перечисления query параметров в url
             if(filterCategories !== ''){
-                url += `&categoryId=${filterCategories}`
+                
+                url += `&categoryId=${filterCategories}`;
+
+            }
+
+            if(filterPrice !== ''){
+                url += `&priceFilter=${filterPrice}`;
+            }
+
+            // если состояние фильтра filterTaste.spicy true,то добавляем к url еще query параметр tasteId со значением 1(указываем значение 1,так как на бэкэнде в базе данных сделали так,что нужно указывать фильтр taste по его id,на бэкэнде это обрабатываем,в данном случае для фильтра вкуса sweet на бэкэнде id 1)
+            if(filterTaste.sweet){
+                url += `&tasteId=1`;
+            }
+
+            if(filterTaste.spicy){
+                url += `&tasteId=2`;
+            }
+
+            if(filterTaste.bitter){
+                url += `&tasteId=3`;
             }
 
             const response = await axios.get<IProduct[]>(url); // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
@@ -56,11 +75,27 @@ const Catalog = () => {
         setSearchValue(e.target.value);
     }
 
+
+    // при изменении searchValue,то есть когда пользователь что-то вводит в инпут поиска,то изменяем category на пустую строку и остальные фильтры тоже,соответственно будет сразу идти поиск по всем товарам,а не в конкретной категории или определенных фильтрах,но после поиска можно будет результат товаров по поиску уже отфильтровать по категориям и делаем повторный запрос на сервер уже с измененным значение searchValue(чтобы поисковое число(число товаров,которое изменяется при поиске) показвалось правильно,когда вводят что-то в поиск)
+    useEffect(()=>{
+
+        setFilterCategories('');
+
+        setFilterPrice('');
+
+        setFilterTaste({
+            sweet:false,
+            spicy:false,
+            bitter:false
+        });
+
+    },[searchValue])
+
     useEffect(() => {
         
         refetch(); // делаем повторный запрос на получение товаров при изменении searchValue(значение инпута поиска), и filterCategories
 
-    }, [searchValue,filterCategories])
+    }, [searchValue,filterCategories,filterPrice,filterTaste])
 
     return (
         <main className="main">
@@ -245,9 +280,10 @@ const Catalog = () => {
 
                             <div className="sectionCatalog__mainBlock-products">
 
-                                {data?.data.map((product)=>
-                                    <ProductItemCatalog product={product} key={product.id}/>
-                                )}
+                                {data?.data.length ? data?.data.map((product)=>
+                                    <ProductItemCatalog product={product} key={product.id}/>)
+                                    : <h4 className="sectionCatalog__notFoundText">Not found</h4>
+                                }
 
                             </div>
                         </div>

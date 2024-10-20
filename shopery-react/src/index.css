@@ -880,3 +880,8 @@ a {
 .products__item-img{
   align-self: center;
 }
+
+.sectionCatalog__notFoundText{
+  font-weight: 600;
+  font-size: 16px;
+}
