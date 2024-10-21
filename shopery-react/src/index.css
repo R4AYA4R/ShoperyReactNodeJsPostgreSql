@@ -635,7 +635,7 @@ a {
   border: 1px solid #00B207;
 }
 
-.categories__item-radio:checked+.categories__item-radioStyleActive::before {
+/* .categories__item-radio:checked+.categories__item-radioStyleActive::before {
   content: "";
   width: 11px;
   height: 11px;
@@ -645,7 +645,26 @@ a {
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
+} */
+
+.categories__item-ragioStyleBefore{
+  opacity: 0;
 }
+
+.categories__item-ragioStyleBefore--active{
+  display: block;
+  opacity: 1;
+  width: 11px;
+  height: 11px;
+  background-color: #00B207;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  transition:opacity .5s ease;
+}
+
 
 .sectionCatalog__mainBlock-top {
   display: flex;
@@ -662,6 +681,12 @@ a {
   font-size: 14px;
   font-weight: 400;
   color: #808080;
+  opacity: 1;
+  transition:opacity .3s ease;
+}
+
+.categories__item-amountDisable{
+  opacity: 0;
 }
 
 .mainBlock__top-input {
@@ -789,6 +814,30 @@ a {
   padding: 16px 0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+}
+
+.mainBlock__filters-amountBlock{
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.filters__amountBlock-amount{
+  color:#1A1A1A;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.filters__amountBlock-amountSubText{
+  font-size: 14px;
+  font-weight: 400;
+  color: #808080;
+}
+
+.mainBlock__filters-leftBlock{
+  display: flex;
+  align-items: center;
   gap:24px;
 }
 
@@ -845,7 +894,7 @@ a {
   display: grid;
   grid-template-columns: repeat(3,1fr);
   gap:24px;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
 .mainBlock__products-item{
@@ -884,4 +933,53 @@ a {
 .sectionCatalog__notFoundText{
   font-weight: 600;
   font-size: 16px;
+}
+
+.sectionCatalog__mainBlock-pagination{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap:8px;
+  margin-bottom: 50px;
+}
+
+.pagination__btnArrowLeft{
+  margin-right: 8px;
+}
+
+.pagination__btnArrowRight{
+  margin-left: 8px;
+}
+
+.pagination__btnArrow{
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background-color: #fff;
+  border: 1px solid #E6E6E6;
+  cursor:pointer;
+  transition:all .5s ease;
+}
+
+.pagination__btnArrow:hover{
+  background-color: #F2F2F2;
+}
+
+.pagination__page{
+  background-color: #fff;
+  border: none;
+  border-radius: 50%;
+  padding: 10px 14px;
+  text-align: center;
+  cursor:pointer;
+  color: #808080;
+  transition:all .5s ease;
+  font-size: 16px;
+}
+
+.pagination__page:hover{
+  background-color: #00B207;
+  color:#fff;
 }
