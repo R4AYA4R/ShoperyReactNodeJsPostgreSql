@@ -3,8 +3,11 @@ import SectionCatalogTop from "../components/SectionCatalogTop";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { IProduct } from "../types/types";
+import { IProduct, IProductData } from "../types/types";
 import ProductItemCatalog from "../components/ProductItemCatalog";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
+import { getPagesArray } from "../utils/getPagesArray";
 
 const Catalog = () => {
 
@@ -28,6 +31,17 @@ const Catalog = () => {
     const [selectBlockActive, setSelectBlockActive] = useState(false);
 
     const [selectValue, setSelectValue] = useState('');
+
+
+    const [limit,setLimit] = useState(1); // указываем лимит для максимального количества объектов,которые будут на одной странице(для пагинации)
+
+    const [page,setPage] = useState(1); // указываем состояние текущей страницы
+
+
+    const {totalPages} = useTypedSelector(state => state.totalPagesReducer); // указываем наш слайс(редьюсер) под названием totalPagesReducer и деструктуризируем у него поле состояния totalPages(в данном случае для общего количества страниц,это не обязательно делать через redux,в данном случае просто для практики и чтобы не забыть),используя наш типизированный хук для useSelector
+
+    const {changeTotalPages} = useActions(); // берем action changeTotalPages для изменения totalPages у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
+
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
     const { data, refetch } = useQuery({
@@ -61,10 +75,26 @@ const Catalog = () => {
                 url += `&tasteId=3`;
             }
 
-            const response = await axios.get<IProduct[]>(url); // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
+            // указываем здесь тип данных,которые приходят от сервера как тип на основе нашего интерфейса IProductData
+            const response = await axios.get<IProductData>(url,{
+                params:{
+                    limit:limit, // указываем параметр limit для максимального количества объектов,которые будут на одной странице(для пагинации)
+
+                    page:page // указываем параметр page(параметр текущей страницы,для пагинации)
+                }
+            }); // делаем запрос на сервер для получения всех товаров,указываем в типе в generic наш тип на основе интерфейса IProduct,указываем,что это массив(то есть указываем тип данных,которые придут от сервера)
 
 
-            console.log(response.data);
+            console.log(response);
+
+            const totalCount = data?.data.count; // записываем общее количество объктов товаров,которые пришли от сервера в переменную totalCount(берем это у поля count у data у data)
+
+
+            // если totalCount true,то есть в totalCount есть какое-то значение,то изменяем общее количество страниц,делаем эту проверку, потому что totalCount может быть undefined(выдает ошибку такую)
+            if(totalCount){
+                changeTotalPages({totalCount:totalCount, limit:limit});// используем наш action для изменения состояния redux,в данном случае она изменяет поле totalPages,в нее передаем объект с полями totalCount и limit(можно указать просто totalCount, вместо totalCount:totalCount,так как ключ и значение одинаковые,но можно и так),эта функция делит totalCount на limit с помощью Math.ceil(),чтобы округлить результат до большего целого числа,для пагинации
+            }
+
 
             return response;
         }
@@ -75,7 +105,7 @@ const Catalog = () => {
     const {data:dataWithoutLimitAndChecks,refetch:refetchWithoutLimitAndChecks} = useQuery({
         queryKey:['productsWithoutLimitAndChecks'],
         queryFn: async () => {
-            const response = await axios.get<IProduct[]>(`http://localhost:5000/api/getProductsCatalog?name=${searchValue}`);
+            const response = await axios.get<IProduct[]>(`http://localhost:5000/api/getProductsCatalogWithouLimit?name=${searchValue}`);
 
             return response;
         }
@@ -107,6 +137,7 @@ const Catalog = () => {
 
     const inputChangeHandler = (e: ChangeEvent<HTMLInputElement>) => {
         setSearchValue(e.target.value);
+        setPage(1); // изменяем состояние текущей страницы на 1,чтобы при поиске страница ставилась на первую
     }
 
 
@@ -125,17 +156,42 @@ const Catalog = () => {
 
     }, [searchValue])
 
+    // указываем в массиве зависимостей этого useEffect data?.data,чтобы делать повторный запрос на получения объектов товаров при изменении data?.data,в данном случае это для пагинации,если не указать data?.data,то пагинация при запуске страницы не будет работать
     useEffect(() => {
 
-        refetch(); // делаем повторный запрос на получение товаров при изменении searchValue(значение инпута поиска), и filterCategories
+        refetch(); // делаем повторный запрос на получение товаров при изменении searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния страницы и data?.data,данных о товарах и общее количество товаров,которые приходят от сервера
 
-    }, [searchValue, filterCategories, filterPrice, filterTaste])
+    }, [data?.data,searchValue, filterCategories, filterPrice, filterTaste,page])
 
     useEffect(()=>{
 
         refetchWithoutLimitAndChecks(); // делаем запрос на сервер еще раз,чтобы переобновить данные для отображения числа найденных товаров
 
     },[searchValue])
+
+
+    // при изменении фильтров изменяем состояние текущей страницы на первую
+    useEffect(()=>{
+
+        setPage(1);
+
+    },[filterCategories,filterPrice,filterTaste])
+
+    let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
+
+    const prevPage = () => {
+        // если текущая страница больше или равна 2
+        if (page >= 2) {
+            setPage((prev) => prev - 1); // изменяем состояние текущей страницы на - 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и отнимаем 1)
+        }
+    }
+
+    const nextPage = () => {
+        // если текущая страница меньше или равна общему количеству страниц - 1(чтобы после последней страницы не переключалось дальше)
+        if (page <= totalPages - 1) {
+            setPage((prev) => prev + 1); // изменяем состояние текущей страницы на + 1(то есть в setPage берем prev(предыдущее значение,то есть текущее) и прибавляем 1)
+        }
+    }
 
     return (
         <main className="main">
@@ -336,7 +392,7 @@ const Catalog = () => {
                                 </div>
 
                                 <div className="mainBlock__filters-amountBlock">
-                                    <p className="filters__amountBlock-amount">{data?.data.length}</p>
+                                    <p className="filters__amountBlock-amount">{data?.data.rows.length}</p>
                                     <p className="filters__amountBlock-amountSubText">Results found.</p>
                                 </div>
 
@@ -344,7 +400,8 @@ const Catalog = () => {
 
                             <div className="sectionCatalog__mainBlock-products">
 
-                                {data?.data.length ? data?.data.map((product) =>
+                                {/* указываем если data?.data.rows.length true,то есть товары есть,то показываем их,в другом случае показываем текст,указываем так данные товара,потому что от сервера приходит объект(response) с многими полями, у этого объекта нужные нам данные хранятся в поле data,а у этого поля data есть еще 2 поля count(числов всех объектов товаров,которые пришли от сервера) и rows(где находится массив товаров для конкретной страницы,это мы делали для пагинации) */}
+                                {data?.data.rows.length ? data?.data.rows.map((product) =>
                                     <ProductItemCatalog product={product} key={product.id} />)
                                     : <h4 className="sectionCatalog__notFoundText">Not found</h4>
                                 }
@@ -353,20 +410,39 @@ const Catalog = () => {
 
 
                             {/* если длина массива объектов товаров true(то есть товары есть),то показывать пагинацию,в другом случае пустая строка(то есть ничего не показывать) */}
-                            {data?.data.length ? 
+                            {data?.data.rows.length ? 
                                 <div className="sectionCatalog__mainBlock-pagination">
-                                    <button className="pagination__btnArrow pagination__btnArrowLeft">
+                                    <button className="pagination__btnArrow pagination__btnArrowLeft" onClick={prevPage}>
                                         <img src="/images/sectionCatalog/Chevron Down (1).png" alt="" className="pagination__btnArrowLeft-img" />
                                     </button>
 
 
-                                    <button className="pagination__page">1</button>
+                                    {pagesArray.map(p =>
+                                        <button 
+                                        
+                                            className={page === p ? "pagination__page pagination__page--active" : "pagination__page"} //если состояние номера текущей страницы page равно значению элементу массива pagesArray,то отображаем такие классы,в другом случае другие,чтобы показать,что эта страница активна сейчас
 
-                                    <div className="pagination__dots">...</div>
+                                            key={p}
 
-                                    <button className="pagination__page">5</button>
+                                            onClick={()=>setPage(p)} // отслеживаем на какую кнопку нажал пользователь и делаем ее активной,изменяем состояние текущей страницы page на значение элемента массива pagesArray(то есть страницу,на которую нажал пользователь)
+                                        >
+                                            {p}
+                                        </button>
+                                    )}
 
-                                    <button className="pagination__btnArrow pagination__btnArrowRight">
+                                    
+                                    {/* если общее количество страниц больше 4 и текущая страница меньше общего количества страниц - 2,то отображаем три точки */}
+                                    {totalPages > 4 && page < totalPages - 2 && 
+                                        <div className="pagination__dots">...</div>
+                                    }
+                                    
+                                    {/* если общее количество страниц больше 3 и текущая страница меньше общего количества страниц - 1,то отображаем кнопку последней страницы,при клике на кнопку изменяем состояние текущей страницы на totalPages(общее количество страниц,то есть на последнюю страницу)  */}
+                                    {totalPages > 3  && page < totalPages - 1 && 
+                                        <button className="pagination__page" onClick={()=>setPage(totalPages)}>{totalPages}</button>
+                                    }
+                                    
+
+                                    <button className="pagination__btnArrow pagination__btnArrowRight" onClick={nextPage}>
                                         <img src="/images/sectionCatalog/Chevron Down (2).png" alt="" className="pagination__btnArrowRight-img" />
                                     </button>
                                     

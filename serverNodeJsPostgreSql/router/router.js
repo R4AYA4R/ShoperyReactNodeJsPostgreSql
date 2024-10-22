@@ -7,4 +7,6 @@ router.get('/getProducts', productController.getProducts); // описываем
 
 router.get('/getProductsCatalog', productController.getProductsCatalog); 
 
+router.get('/getProductsCatalogWithouLimit', productController.getProductsCatalogWithoutLimit); 
+
 export default router;

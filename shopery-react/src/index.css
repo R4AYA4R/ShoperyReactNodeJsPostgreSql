@@ -979,6 +979,11 @@ a {
   font-size: 16px;
 }
 
+.pagination__page--active{
+  background-color: #00B207;
+  color:#fff;
+}
+
 .pagination__page:hover{
   background-color: #00B207;
   color:#fff;
