@@ -357,6 +357,14 @@ a {
   color: #1A1A1A;
 }
 
+.deals__item-stars{
+  margin-bottom: 1px;
+}
+
+.stars__itemOrange{
+  max-width: 14px;
+}
+
 .sectionDiscountBanner {
   margin-bottom: 60px;
   opacity: 0;
@@ -559,6 +567,12 @@ a {
 
 .sectionCatalogTop__text {
   color: #00B207;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.sectionCatalogTop__textGray {
+  color: #808080;
   font-size: 16px;
   font-weight: 400;
 }
@@ -987,4 +1001,197 @@ a {
 .pagination__page:hover{
   background-color: #00B207;
   color:#fff;
+}
+
+.sectionProductItemTop__inner{
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  align-items: center;
+  gap: 24px;
+}
+
+.sectionProductItemTop__img{
+  justify-self: center;
+}
+.sectionProductItemTop__info-title{
+  font-size: 36px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 12px;
+}
+
+.sectionProductItemTop__info-price{
+  font-size: 24px;
+  font-weight: 500;
+  color: #2C742F;
+  margin-top: 20px;
+  padding-bottom: 20px;
+  border-bottom:1px solid #E6E6E6;
+  margin-bottom: 24px;
+}
+
+.categoryBlock__category-text{
+  font-size: 14px;  
+  font-weight: 500;
+  color: #1A1A1A;
+}
+.categoryBlock__category-subtext{
+  font-size: 14px;
+  font-weight: 400;
+  color: #808080;
+}
+
+.categoryBlock__category{
+  display: flex;  
+  align-items: center;
+  gap:5px;
+  margin-bottom: 12px;
+}
+
+
+.sectionProductItemTop{
+  opacity: 0;
+  transform:translateX(-100%);
+  transition:all 1s ease;
+}
+
+.sectionProductItemTop--active{
+  opacity: 1;
+  transform:translateX(0);
+}
+
+.sectionProductItemTop__info-categoryBlock{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.sectionProductItemTop__info-desc{
+  font-size: 14px;
+  font-weight: 400;
+  color: #808080;
+  padding-bottom: 24px;
+  border-bottom:1px solid #E6E6E6;
+  margin-bottom: 20px;
+}
+
+.CartBlock__inputBlock-input{
+  padding: 16px 42px;
+  border-radius: 170px;
+  border: 1px solid #E6E6E6;
+  width: 100%;
+  outline:none;
+  text-align: center;
+}
+
+/* убираем стрелки вверх и вниз для инпута с типом number по умолчанию */
+.CartBlock__inputBlock-input::-webkit-inner-spin-button,
+.CartBlock__inputBlock-input::-webkit-outer-spin-button {
+  appearance: none;
+}
+
+.CartBlock__inputBlock-inputBtn{
+  background-color: #F2F2F2;
+  border-radius: 170px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-width: 34px;
+  padding: 10px;
+  cursor:pointer;
+  opacity: 1;
+  transition:opacity .5s ease;
+}
+
+.CartBlock__inputBlock-inputBtn:hover{
+  opacity: 0.7;
+}
+
+.CartBlock__inputBlock-inputBtnMinus{
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+
+.CartBlock__inputBlock-inputBtnPlus{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+}
+
+.info__CartBlock-inputBlock{
+  position: relative;
+  max-width: 124px;
+}
+
+.sectionProductsItemTop__info-CartBlock{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 57px;
+}
+
+.info__CartBlock-btn{
+  background-color: #00B207;
+  padding: 10px 160px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap:16px;
+  border:none;
+  border-radius: 43px;
+  cursor:pointer;
+  opacity: 1;
+  transition:all .5s ease;
+}
+
+.info__CartBlock-btn:hover{
+  opacity: 0.7;
+  animation: cartBlock__btn 1s ease infinite;
+}
+
+.CartBlock__btn-text{
+  font-family: 'Poppins',sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.info__CartBlock-btn:hover .CartBlock__btn-img{
+  animation: cartBlock__btnImg 1s ease infinite;
+}
+
+@keyframes cartBlock__btn {
+  0%{
+    opacity: 1;
+  }
+
+  50%{
+    opacity: 0.7;
+  }
+
+  100%{
+    opacity: 1;
+  }
+}
+
+@keyframes cartBlock__btnImg {
+  0%{
+    transform:translateX(0);
+  }
+
+  30%{
+    transform:translateX(100%);
+  }
+
+  50%{
+    transform:translateX(-20%);
+  }
+
+  70%{
+    transform:translateX(20%);
+  }
+
+  100%{
+    transform:translateX(0);
+  }
 }

@@ -7,6 +7,8 @@ router.get('/getProducts', productController.getProducts); // описываем
 
 router.get('/getProductsCatalog', productController.getProductsCatalog); 
 
+router.get('/getProductsCatalog/:id', productController.getProductId); 
+
 router.get('/getProductsCatalogWithouLimit', productController.getProductsCatalogWithoutLimit); 
 
 export default router;

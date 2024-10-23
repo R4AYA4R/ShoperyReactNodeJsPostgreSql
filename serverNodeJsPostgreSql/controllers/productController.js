@@ -148,6 +148,26 @@ class ProductController {
 
     }
 
+
+    async getProductId(req,res){
+
+        try{
+
+            const {id} = req.params; // берем id из параметров запроса(мы указали этот динамический параметр id в url к эндпоинту,поэтому можем его взять из req.params)
+
+            // ищем один объект в таблице Product в базе данных с помощью функции findOne() и помещаем его в переменную product,передаем условие,что нужно найти объект с полем id как параметр запроса id(можно было указать where {id:id}, но можно указать один раз id,так как название ключа(поля в объекте) и его значение одинаковые)
+            const product = await models.Product.findOne({
+                where:{id}
+            });
+
+            return res.json(product); // возвращаем объект товара(product) на клиент после всех проверок выше
+
+        }catch(e){
+            console.log(e);
+        }
+
+    }
+
 }
 
 export default new ProductController(); // экспортируем объект на основе класса ProductController
