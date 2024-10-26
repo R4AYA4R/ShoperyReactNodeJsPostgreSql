@@ -1464,6 +1464,18 @@ a {
   text-align: center;
 }
 
+.sectionCart{
+  padding-bottom: 200px;
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: all 1s ease;;
+}
+
+.sectionCart--active{
+  opacity: 1;
+  transform:translateX(0);
+}
+
 .sectionCart__main{
   display: grid;
   grid-template-columns: 2fr 1fr;
@@ -1634,3 +1646,126 @@ a {
 .sectionCart__rightBlock-btn:hover{
   background-color: #369b39;
 }   
+
+.sectionUserForm__inner{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 48px 0 80px 0;
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: all 1s ease;
+}
+
+.sectionUserForm__inner--active{
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sectionUserForm__login{
+  border-radius: 8px;
+  border: 1px solid #F2F2F2;
+  /* какие значение что значат в данном box-shadow по порядку, offset-x | offset-y | blur-radius | spread-radius | color */
+  box-shadow: 0 0 56px 0 rgba(0,38,3,0.1);
+  max-width: 520px;
+  padding: 24px 24px 32px;
+  animation: appear 1s ease forwards;
+}
+
+
+.sectionUserForm__login-title{
+  font-size: 32px;
+  font-weight: 600;
+  color: #1A1A1A;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sectionUserForm__login-input{
+  font-family: 'Poppins',sans-serif;
+  border-radius: 8px;
+  border: 1px solid #E6E6E6;
+  padding: 14px 16px;
+  font-size: 16px;
+  font-weight: 400;
+  outline:none;
+  margin-bottom: 12px;
+  min-width: 472px;
+}
+
+.sectionUserForm__login-passwordBlock{
+  position: relative;
+}
+
+.sectionUserForm__login-inputPassword{
+  padding: 16px 50px 16px 16px;
+}
+
+.login__passwordBlock-img{
+  position: absolute;
+  top: 19px;
+  right: 15px;
+  cursor:pointer;
+  opacity: 1;
+  transition: opacity .5s ease;
+}
+
+.login__passwordBlock-img:hover{
+  opacity: 0.5;
+}
+
+.sectionUserForm__login-btn{
+  margin-top: 12px;
+  font-family: 'Poppins',sans-serif;
+  background-color: #00B207;
+  border-radius: 43px;
+  color:#fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  border: none;
+  transition:all .5s ease;
+  cursor: pointer;
+  margin-bottom: 20px;
+  padding: 14px 150px;
+  width: 100%;
+}
+
+.sectionUserForm__login-btn:hover{
+  background-color: #1c8f1f;
+}
+
+.sectionUserForm__login-textBlock{
+  display: flex;
+  align-items: center; 
+  justify-content: center;
+  gap:5px;
+}
+
+.login__textBlock-text{
+  font-size: 14px;
+  font-weight: 400;
+  color: #808080;
+}
+
+.login__textBlock-linkText{
+  font-size: 14px;
+  font-weight: 500;
+  color: #1A1A1A;
+  opacity: 1;
+  transition:opacity .5s ease;
+  cursor: pointer;
+}
+
+.login__textBlock-linkText:hover{
+  opacity: 0.5;
+}
+
+.categories__item-textLogin{
+  opacity: 1;
+  transition:opacity .5s ease;
+}
+
+.categories__item-textLogin:hover{
+  opacity: 0.5;
+}

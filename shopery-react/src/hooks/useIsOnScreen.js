@@ -13,6 +13,8 @@ export const useIsOnScreen = (ref)=>{
         sectionCatalogTopIntersecting:false,
         sectionCatalogIntersecting:false,
         sectionProductItemTopIntersecting:false,
+        sectionCartIntersecting:false,
+        sectionUserFormInnerIntersecting:false,
     });
 
 
@@ -74,6 +76,20 @@ export const useIsOnScreen = (ref)=>{
                 if(entry.target.id === 'sectionProductItemTop'){
                     
                     setIsIntersectingNow((prev)=>({...prev,sectionProductItemTopIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
+                }
+                if(entry.target.id === 'sectionCart'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionCartIntersecting:true}));
+
+                    observer.unobserve(entry.target);
+
+                }
+                if(entry.target.id === 'sectionUserFormInner'){
+                    
+                    setIsIntersectingNow((prev)=>({...prev,sectionUserFormInnerIntersecting:true}));
 
                     observer.unobserve(entry.target);
 

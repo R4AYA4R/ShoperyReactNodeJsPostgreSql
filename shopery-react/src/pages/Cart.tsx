@@ -1,7 +1,12 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import SectionCartTop from "../components/SectionCartTop";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const Cart = () => {
+
+    const sectionCartRef = useRef(null);
+
+    const onScreen = useIsOnScreen(sectionCartRef);
 
     const [activeStars, setActiveStars] = useState(0);
 
@@ -40,7 +45,7 @@ const Cart = () => {
     return (
         <main className="main">
             <SectionCartTop />
-            <section className="sectionCart">
+            <section className={onScreen.sectionCartIntersecting ? "sectionCart sectionCart--active" : "sectionCart"} id="sectionCart" ref={sectionCartRef} >
                 <div className="container">
                     <div className="sectionCart__inner">
                         <h1 className="sectionCart__title">Shopping Cart</h1>
