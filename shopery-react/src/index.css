@@ -1011,7 +1011,7 @@ a {
   gap: 24px;
 }
 
-.stars__ProductItemPage{
+.stars__ProductItemPage {
   max-width: none;
 }
 
@@ -1344,41 +1344,41 @@ a {
   gap: 50px;
 }
 
-.topUserBlock-title{
+.topUserBlock-title {
   font-size: 20px;
   font-weight: 700;
   color: #1A1A1A;
 }
 
-.reviews__leftBlock-itemTop{
+.reviews__leftBlock-itemTop {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
 }
 
-.leftBlock__itemTop-userBlock{
+.leftBlock__itemTop-userBlock {
   display: flex;
   align-items: center;
-  gap:12px;
+  gap: 12px;
 }
 
-.leftBlock__itemMain-text{
+.leftBlock__itemMain-text {
   font-size: 14px;
   font-weight: 400;
   color: #808080;
 }
 
-.leftBlock__itemTop-dataText{
+.leftBlock__itemTop-dataText {
   font-size: 14px;
   font-weight: 400;
   color: #929292;
 }
 
-.userBlock__userInfo-title{
+.userBlock__userInfo-title {
   font-size: 14px;
   font-weight: 500;
-  color:#1A1A1A;
+  color: #1A1A1A;
 }
 
 .reviews__rightBlock-btnBlock {
@@ -1386,7 +1386,7 @@ a {
   justify-content: end;
 }
 
-.reviews__rightBlock-btnBlockNone{
+.reviews__rightBlock-btnBlockNone {
   display: none;
 }
 
@@ -1403,18 +1403,18 @@ a {
   margin-bottom: 20px;
 }
 
-.reviews__rightBlock-form{
+.reviews__rightBlock-form {
   opacity: 0;
-  transition:all 1s ease;
-  transform:translateX(100%);
+  transition: all 1s ease;
+  transform: translateX(100%);
 }
 
-.reviews__rightBlock-form--active{
+.reviews__rightBlock-form--active {
   opacity: 1;
-  transform:translateX(0);
+  transform: translateX(0);
 }
 
-.reviews__form-topStars{
+.reviews__form-topStars {
   display: flex;
   align-items: center;
 }
@@ -1425,11 +1425,12 @@ a {
   outline: none;
   border: 1px solid #E5E5E5;
   padding: 15px 20px 10px 15px;
-  resize: none; /* убираем возможность изменять размер textarea */
+  resize: none;
+  /* убираем возможность изменять размер textarea */
   min-height: 70px;
 }
 
-.reviews__form-submitBtn{
+.reviews__form-submitBtn {
   font-family: 'Poppins', sans-serif;
   padding: 8px 24px;
   color: #fff;
@@ -1446,17 +1447,17 @@ a {
   background-color: #369b39;
 }
 
-.topStars__img{
-  cursor:pointer;
+.topStars__img {
+  cursor: pointer;
   opacity: 1;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.topStars__img:hover{
+.topStars__img:hover {
   opacity: 0.5;
 }
 
-.sectionCart__title{
+.sectionCart__title {
   font-size: 32px;
   font-weight: 600;
   color: #1A1A1A;
@@ -1464,112 +1465,113 @@ a {
   text-align: center;
 }
 
-.sectionCart{
+.sectionCart {
   padding-bottom: 200px;
   opacity: 0;
   transform: translateX(-100%);
-  transition: all 1s ease;;
+  transition: all 1s ease;
+  ;
 }
 
-.sectionCart--active{
+.sectionCart--active {
   opacity: 1;
-  transform:translateX(0);
+  transform: translateX(0);
 }
 
-.sectionCart__main{
+.sectionCart__main {
   display: grid;
   grid-template-columns: 2fr 1fr;
-  gap:24px;
+  gap: 24px;
 }
 
-.sectionCart__main-tableCart{
-  border:1px solid #E6E6E6;
+.sectionCart__main-tableCart {
+  border: 1px solid #E6E6E6;
   border-radius: 10px;
 }
 
-.tableCart__top{
+.tableCart__top {
   padding: 16px 20px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 0.3fr;
   border-bottom: 1px solid #E6E6E6;
 }
 
-.tableCart__top-text{
+.tableCart__top-text {
   font-size: 14px;
   font-weight: 500;
   color: #808080;
   text-transform: uppercase;
 }
 
-.tableCart__item-img{
+.tableCart__item-img {
   max-width: 100px;
   opacity: 1;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.tableCart__product-item{
+.tableCart__product-item {
   padding: 11px 20px;
   display: grid;
   grid-template-columns: 2fr 1fr 1fr 1fr 0.3fr;
   align-items: center;
 }
 
-.tableCart__item-leftBlock{
+.tableCart__item-leftBlock {
   display: flex;
   align-items: center;
-  gap:12px;
+  gap: 12px;
 }
 
-.tableCart__item-text{
+.tableCart__item-text {
   font-size: 16px;
   font-weight: 400;
   color: #1A1A1A;
-  font-family: 'Poppins',sans-serif;
-  transition:all .5s ease;
+  font-family: 'Poppins', sans-serif;
+  transition: all .5s ease;
 }
 
-.tableCart__item-img:hover{
+.tableCart__item-img:hover {
   cursor: pointer;
   opacity: 0.7;
 }
 
-.tableCart__item-text:hover{
-  cursor:pointer;
-  color:#FF8A00;
+.tableCart__item-text:hover {
+  cursor: pointer;
+  color: #FF8A00;
 }
 
-.tableCart__item-price{
+.tableCart__item-price {
   font-size: 16px;
   font-weight: 400;
   color: #1A1A1A;
 }
 
-.tableCart__item-subtotal{
+.tableCart__item-subtotal {
   font-size: 16px;
   font-weight: 500;
   color: #1A1A1A;
 }
 
-.tableCart__item-closeBtn{
+.tableCart__item-closeBtn {
   background-color: #fff;
-  border:none;
-  cursor:pointer;
+  border: none;
+  cursor: pointer;
   opacity: 1;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.tableCart__item-closeBtn:hover{
+.tableCart__item-closeBtn:hover {
   opacity: 0.5;
 }
 
-.tableCart__bottomBlock{
+.tableCart__bottomBlock {
   padding: 16px 20px;
   display: flex;
   justify-content: end;
   border-top: 1px solid #E6E6E6;
 }
 
-.tableCart__bottomBlock-btn{
+.tableCart__bottomBlock-btn {
   border-radius: 43px;
   background-color: #F2F2F2;
   color: #4D4D4D;
@@ -1577,77 +1579,77 @@ a {
   font-weight: 600;
   padding: 14px 32px;
   border: none;
-  cursor:pointer;
-  transition:all .5s ease;
+  cursor: pointer;
+  transition: all .5s ease;
 }
 
-.tableCart__bottomBlock-btn:hover{
-  background-color: rgba(0,0,0,0.2);
+.tableCart__bottomBlock-btn:hover {
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
-.sectionCart__main-rightBlock{
+.sectionCart__main-rightBlock {
   border-radius: 10px;
   border: 1px solid #E6E6E6;
   padding: 24px;
 }
 
-.sectionCart__rightBlock-title{
+.sectionCart__rightBlock-title {
   font-size: 20px;
   font-weight: 500;
   color: #1A1A1A;
   margin-bottom: 7px;
 }
 
-.sectionCart__rightBlock-item{
+.sectionCart__rightBlock-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 12px;
 }
 
-.sectionCart__rightBlock-itemTitle{
+.sectionCart__rightBlock-itemTitle {
   font-size: 14px;
   font-weight: 400;
   color: #4D4D4D;
 }
 
-.sectionCart__rightBlock-itemText{
+.sectionCart__rightBlock-itemText {
   font-size: 14px;
   font-weight: 500;
   color: #1A1A1A;
 }
 
-.sectionCart__rightBlock-itemTextBold{
+.sectionCart__rightBlock-itemTextBold {
   font-size: 16px;
   font-weight: 600;
   color: #1A1A1A;
 }
 
-.sectionCart__rightBlock-itemBorderTop{
+.sectionCart__rightBlock-itemBorderTop {
   border-top: 1px solid #E6E6E6;
   padding-top: 12px;
 }
 
-.sectionCart__rightBlock-btn{
-  font-family: 'Poppins',sans-serif;
+.sectionCart__rightBlock-btn {
+  font-family: 'Poppins', sans-serif;
   margin-top: 20px;
   border-radius: 43px;
   background-color: #00B207;
   color: #fff;
   padding: 16px 100px;
-  border:none;
+  border: none;
   font-size: 14px;
   font-weight: 600;
   width: 100%;
-  cursor:pointer;
-  transition:all .5s ease;
+  cursor: pointer;
+  transition: all .5s ease;
 }
 
-.sectionCart__rightBlock-btn:hover{
+.sectionCart__rightBlock-btn:hover {
   background-color: #369b39;
-}   
+}
 
-.sectionUserForm__inner{
+.sectionUserForm__inner {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1657,23 +1659,23 @@ a {
   transition: all 1s ease;
 }
 
-.sectionUserForm__inner--active{
+.sectionUserForm__inner--active {
   opacity: 1;
   transform: translateX(0);
 }
 
-.sectionUserForm__login{
+.sectionUserForm__login {
   border-radius: 8px;
   border: 1px solid #F2F2F2;
   /* какие значение что значат в данном box-shadow по порядку, offset-x | offset-y | blur-radius | spread-radius | color */
-  box-shadow: 0 0 56px 0 rgba(0,38,3,0.1);
+  box-shadow: 0 0 56px 0 rgba(0, 38, 3, 0.1);
   max-width: 520px;
   padding: 24px 24px 32px;
   animation: appear 1s ease forwards;
 }
 
 
-.sectionUserForm__login-title{
+.sectionUserForm__login-title {
   font-size: 32px;
   font-weight: 600;
   color: #1A1A1A;
@@ -1681,91 +1683,98 @@ a {
   text-align: center;
 }
 
-.sectionUserForm__login-input{
-  font-family: 'Poppins',sans-serif;
+.sectionUserForm__login-input {
+  font-family: 'Poppins', sans-serif;
   border-radius: 8px;
   border: 1px solid #E6E6E6;
   padding: 14px 16px;
   font-size: 16px;
   font-weight: 400;
-  outline:none;
+  outline: none;
   margin-bottom: 12px;
   min-width: 472px;
 }
 
-.sectionUserForm__login-passwordBlock{
+.sectionUserForm__login-passwordBlock {
   position: relative;
 }
 
-.sectionUserForm__login-inputPassword{
+.sectionUserForm__login-inputPassword {
   padding: 16px 50px 16px 16px;
 }
 
-.login__passwordBlock-img{
+.login__passwordBlock-img {
   position: absolute;
   top: 19px;
   right: 15px;
-  cursor:pointer;
+  cursor: pointer;
   opacity: 1;
   transition: opacity .5s ease;
 }
 
-.login__passwordBlock-img:hover{
+.login__passwordBlock-img:hover {
   opacity: 0.5;
 }
 
-.sectionUserForm__login-btn{
+.sectionUserForm__login-btn {
   margin-top: 12px;
-  font-family: 'Poppins',sans-serif;
+  font-family: 'Poppins', sans-serif;
   background-color: #00B207;
   border-radius: 43px;
-  color:#fff;
+  color: #fff;
   font-size: 14px;
   font-weight: 600;
   text-align: center;
   border: none;
-  transition:all .5s ease;
+  transition: all .5s ease;
   cursor: pointer;
   margin-bottom: 20px;
   padding: 14px 150px;
   width: 100%;
 }
 
-.sectionUserForm__login-btn:hover{
+.sectionUserForm__login-btn:hover {
   background-color: #1c8f1f;
 }
 
-.sectionUserForm__login-textBlock{
+.sectionUserForm__login-textBlock {
   display: flex;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
-  gap:5px;
+  gap: 5px;
 }
 
-.login__textBlock-text{
+.login__textBlock-text {
   font-size: 14px;
   font-weight: 400;
   color: #808080;
 }
 
-.login__textBlock-linkText{
+.login__textBlock-linkText {
   font-size: 14px;
   font-weight: 500;
   color: #1A1A1A;
   opacity: 1;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
   cursor: pointer;
 }
 
-.login__textBlock-linkText:hover{
+.login__textBlock-linkText:hover {
   opacity: 0.5;
 }
 
-.categories__item-textLogin{
+.categories__item-textLogin {
   opacity: 1;
-  transition:opacity .5s ease;
+  transition: opacity .5s ease;
 }
 
-.categories__item-textLogin:hover{
+.categories__item-textLogin:hover {
   opacity: 0.5;
+}
+
+.formErrorText {
+  font-size: 16px;
+  color: #EE5858;
+  font-weight: 400;
+  margin-bottom: 5px;
 }
