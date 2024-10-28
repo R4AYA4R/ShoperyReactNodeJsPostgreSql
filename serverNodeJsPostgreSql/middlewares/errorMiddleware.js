@@ -7,7 +7,6 @@ export default function(err,req,res,next){
 
     // если ошибка является инстансом нашего класса ApiError,то есть принадлежит ли параметр err(ошибка) нашему классу ApiError
     if(err instanceof ApiError){
-        console.log(err.message);
         return res.status(err.status).json({message:err.message,errors:err.errors});  // возвращаем на клиент статус код ошибки(err.status),сообщение ошибки и массив ошибок(err.errors)
 
     }
