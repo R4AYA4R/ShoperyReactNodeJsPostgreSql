@@ -17,6 +17,7 @@ import db from './db.js'; // указываем здесь расширение 
 
 import models from './models/models.js';
 import router from './router/router.js';
+import errorMiddleware from './middlewares/errorMiddleware.js';
 
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
@@ -32,6 +33,8 @@ app.use(cors({
 app.use(express.json()); // подключаем express.json(),чтобы наш сервер мог парсить json формат данных,то есть обмениваться с браузером json форматом данных
 
 app.use('/api',router); // подключаем роутер к нашему серверу,первым параметром указываем url по которому будет отрабатывать этот роутер,а вторым параметром указываем сам роутер 
+
+app.use(errorMiddleware); // подключаем наш middleware для обработки ошибок,middleware для обработки ошибок нужно подключать в самом конце всех подключений use()
 
 // делаем эту функцию start асинхронной,так как все операции с базой данных являются асинхронными
 const start = async () => {
