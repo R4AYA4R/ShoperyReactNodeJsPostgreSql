@@ -73,6 +73,19 @@ const start = async () => {
         // await models.Taste.create({taste:"Spicy"});
         // await models.Taste.create({taste:"Bitter"});
 
+
+        // это делаем один раз для создания ролей в базе данных у таблицы Role,потом этот код закомментируем
+        // await models.Role.create({value:"USER"});
+        // await models.Role.create({value:"ADMIN"});
+
+        // создали тестовые объекты пользователей, в поле roleId указали id объекта из таблицы Role(то есть указали какая роль будет у пользователя,объект Role содержит поле value со значением роли)
+        // await models.User.create({email:"testEmail",userName:"testUserName",password:"testPass",roleId:1})
+        // await models.User.create({email:"testEmail2",userName:"testUserName2",password:"testPass2",roleId:2})
+
+        // создали тестовые объекты токенов,в поле userId указали id объекта из таблицы User(то есть указали у какого пользователя этот refresh токен)
+        // await models.Token.create({refreshToken:"j;ladjsf;lkajdflkja",userId:1});
+        // await models.Token.create({refreshToken:"j;ladjsf;lkajdflkja2",userId:2});
+
     }catch(e){
         console.log(e);
     }
