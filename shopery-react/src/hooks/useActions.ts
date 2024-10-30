@@ -2,9 +2,12 @@ import { useDispatch } from "react-redux";
 import { totalPagesSlice } from "../store/totalPagesSlice";
 import { useMemo } from "react";
 import { bindActionCreators } from "@reduxjs/toolkit";
+import { userSlice } from "../store/userSlice";
 
 const rootActions = {
     ...totalPagesSlice.actions, // разворачиваем все actions(функции,через которые будем менять состояние в redux toolkit) из нашего слайса в этот объект
+
+    ...userSlice.actions  // разворачиваем все actions из нашего слайса userSlice в этот объект
 }
 
 export const useActions = ()=>{

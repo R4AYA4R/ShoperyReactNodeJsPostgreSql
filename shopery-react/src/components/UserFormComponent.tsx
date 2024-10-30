@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import AuthService from "../service/AuthService";
+import { useActions } from "../hooks/useActions";
 
 const UserFormComponent = () => {
 
@@ -32,6 +34,36 @@ const UserFormComponent = () => {
     const [inputEmailSignUp, setInputEmailSignUp] = useState('');
 
     const [inputNameSignUp, setInputNameSignUp] = useState('');
+
+
+    const {registrationForUser} = useActions(); // берем action registrationForUser и другие для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутый в диспатч,так как мы оборачивали это в самом хуке useActions
+
+
+    // функция для регистрации
+    const registration = async (email:string,password:string)=>{
+        // оборачиваем в try catch,чтобы отлавливать ошибки
+        try{
+
+            let name = inputNameSignUp; // помещаем в переменную name(указываем ей именно let,чтобы можно было изменять) значение инпута имени
+
+            name = name.trim().replace(name[0],name[0].toUpperCase()); // убираем пробелы из переменной имени и заменяем первую букву этой строки инпута имени(name[0] в данном случае) на первую букву этой строки инпута имени только в верхнем регистре(name[0].toUpperCase()),чтобы имя начиналось с большой буквы,даже если написали с маленькой
+
+            const response = await AuthService.registration(email,password,name); // вызываем нашу функцию registration() у AuthService,передаем туда email,password и name(имя пользователя,его поместили в переменную name выше в коде),если запрос прошел успешно,то в ответе от сервера будут находиться токены, поле user с объектом пользователя(с полями isActivated,email,id,userName,role),их и помещаем в переменную response
+
+            console.log(response);
+
+            registrationForUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
+            
+
+        }catch(e:any){
+
+            console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера из поля message из поля data у response у e 
+
+            setSignUpError(e.response?.data?.message + '. Fill in all fields correctly'); // помещаем в состояние ошибки формы регистрации текст ошибки,которая пришла от сервера(в данном случае еще и допольнительный текст)
+
+        }
+
+    }
 
 
     // функция для кнопки входа в аккаунт
@@ -88,7 +120,8 @@ const UserFormComponent = () => {
 
             setSignUpError(''); // указываем значение состоянию ошибки пустую строку,то есть ошибки нет
 
-            // здесь вызываем нашу функцию логина
+            registration(inputEmailSignUp,inputPassSignUp); // вызываем нашу функцию регистрации и передаем туда состояния инпутов почты и пароля
+
 
         }
 

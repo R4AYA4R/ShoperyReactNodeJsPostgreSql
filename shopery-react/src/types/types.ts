@@ -28,3 +28,28 @@ export interface IPayloadPages{
     totalCount:number,
     limit:number
 }
+
+
+// создаем и экспортируем интерфейс для объекта пользователя,который приходит от сервера
+export interface IUser{
+    email:string,
+    userName:string,
+    id:number,
+    role:string
+}
+
+// создаем и экспортируем интерфейс для объекта состояния редьюсера для пользователя,указываем ему поле user на основе нашего интерфейса IUser,и остальные поля
+export interface IUserInitialState{
+    user:IUser,
+    isAuth:boolean;
+    isLoading:boolean
+}
+
+// создаем и экспортируем наш интерфейс для AuthResponse
+export interface AuthResponse{
+    // указываем здесь поля этого интерфейса для объекта
+    accessToken:string,
+    refreshToken:string,
+    user:IUser  // указываем в поле user объект(с теми полями, которые описаны в IUser) на основе нашего интерфеса IUser
+
+}
