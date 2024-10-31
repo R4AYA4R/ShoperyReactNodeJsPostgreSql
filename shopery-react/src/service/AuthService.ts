@@ -11,4 +11,11 @@ export default class AuthService{
 
     }
 
+    static async login(email:string,password:string):Promise<AxiosResponse<AuthResponse>>{
+
+        return $api.post<AuthResponse>('/login',{email,password}); // используем наш instance axios(наш axios с определенными настройками для работы) и указываем здесь post(post запрос),первым параметром указываем адрес эндпоинта (/login),вторым параметром указываем тело запроса,указываем тип данных,который возвращает этот post запрос(AuthResponse в данном случае)
+
+
+    }
+
 }

@@ -29,6 +29,16 @@ export const userSlice = createSlice({
 
             state.user = action.payload.user; // изменяем поле user у состояния на action.payload.user(данные пользователя,которые пришли от сервера,в данном случае мы передали в эту функцию registrationForUser объект с данными,которые уже пришли от сервера),так как уже авторизованы
 
+        },
+
+        loginForUser:(state,action:PayloadAction<AuthResponse>)=>{
+
+            localStorage.setItem('token',action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу на сервер
+
+            state.isAuth = true; // изменяем поле isAuth у состояния на true,так как уже авторизованы
+
+            state.user = action.payload.user;  // изменяем поле user у состояния на action.payload.user(данные пользователя,которые пришли от сервера,в данном случае мы передали в эту функцию loginForUser объект с данными,которые уже пришли от сервера),так как уже авторизованы
+
         }
 
     }
