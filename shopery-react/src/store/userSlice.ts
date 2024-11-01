@@ -39,7 +39,24 @@ export const userSlice = createSlice({
 
             state.user = action.payload.user;  // изменяем поле user у состояния на action.payload.user(данные пользователя,которые пришли от сервера,в данном случае мы передали в эту функцию loginForUser объект с данными,которые уже пришли от сервера),так как уже авторизованы
 
+        },
+
+        setLoadingUser:(state,action:PayloadAction<boolean>)=>{
+
+            state.isLoading = action.payload; // изменяем поле isLoading у этого состояния на action.payload(данные,которые передадим этой функции потом при вызове,в данном случае будем передавать true или false,чтобы указать,что сейчас идет загрузка)
+
+        },
+
+        checkAuthUser:(state,action:PayloadAction<AuthResponse>)=>{
+
+            localStorage.setItem('token',action.payload.accessToken); // сохраняем accessToken в localStorage по ключу token,чтобы мы могли добавлять его к каждому запросу
+
+            state.isAuth = true; // изменяем поле isAuth у состояния на true,так как уже авторизованы
+
+            state.user = action.payload.user; // изменяем поле user у состояния на action.payload.user(данные пользователя,которые пришли от сервера,в данном случае мы передали в эту функцию checkAuthUser объект с данными,которые уже пришли от сервера),так как уже авторизованы
+
         }
+
 
     }
 

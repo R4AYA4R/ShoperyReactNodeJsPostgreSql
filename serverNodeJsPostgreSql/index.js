@@ -18,12 +18,15 @@ import db from './db.js'; // указываем здесь расширение 
 import models from './models/models.js';
 import router from './router/router.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
+import cookieParser from 'cookie-parser'; // импортируем cookieParser
 
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
 const PORT = process.env.PORT || 5000; // указываем переменную PORT и даем ей значение как у переменной PORT из файла .env,если такой переменной нет,то указываем значение 5000
 
 const app = express();  // создаем экземпляр нашего приложения с помощью express()
+
+app.use(cookieParser()); // подключаем cookieParser,чтобы работали cookie
 
 // подключаем cors,чтобы взаимодействовать с сервером(отправлять запросы) через браузер,указываем,с каким доменом нужно этому серверу обмениваться куками(cookies),для этого передаем объект в cors(),указываем поле credentials true(разрешаем использовать cookies) и указываем в origin url нашего фронтенда(в данном случае это http://localhost:3000),указываем этот url через переменную окружения CLIENT_URL(мы вынесли туда этот url)
 app.use(cors({
