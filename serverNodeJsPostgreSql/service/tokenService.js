@@ -56,9 +56,17 @@ class TokenService{
     }
 
     async findToken(refreshToken){
-        const tokenData = await models.Token.findOne({where:{refreshToken}}); // вызываем функцию findOne() у таблицы Token в базе данных,передаем туда объект с полем refreshToken и условием,то есть будет найден объект с полем refreshToken и значением таким же,как и параметр этой функции findToken и этот найденный объект помещаем в переменную tokenData
+        const tokenData = await models.Token.findOne({where:{refreshToken}}); // вызываем функцию findOne() у таблицы Token в базе данных,передаем туда объект с полем refreshToken и условием,то есть будет найден объект с полем refreshToken и значением таким же,как и параметр этой функции findToken и этот найденный объект помещаем в переменную tokenData,в данном случае удаленный объект из базы данных не возвращается,то есть в переменной tokenData будет null,поэтому не обязательно его возвращать в этой функции и потом на фронтенд,потому что он не возвращается из базы данных
 
         return tokenData; // возвращаем tokenData
+    }
+
+    async removeToken(refreshToken){
+
+        const tokenData = await models.Token.destroy({where:{refreshToken}}); // вызываем функцию destroy() у таблицы Token в базе данных,передаем туда объект с полем refreshToken и условием,то есть будет найден объект с полем refreshToken и значением таким же,как и параметр этой функции removeToken, и этот объект будет удален из базы данных,и этот удаленный объект помещаем в переменную tokenData
+
+        return tokenData; // возвращаем tokenData
+
     }
 
 }

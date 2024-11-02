@@ -55,6 +55,16 @@ export const userSlice = createSlice({
 
             state.user = action.payload.user; // изменяем поле user у состояния на action.payload.user(данные пользователя,которые пришли от сервера,в данном случае мы передали в эту функцию checkAuthUser объект с данными,которые уже пришли от сервера),так как уже авторизованы
 
+        },
+
+        logoutUser:(state)=>{
+
+            localStorage.removeItem('token'); // удаляем accessToken из localStorage по ключу token
+
+            state.isAuth = false; // изменяем поле isAuth этого класса на false,так как уже вышли из аккаунта
+
+            state.user = {} as IUser; // изменяем поле user этого класса на пустой объект и указываем,что он нашего типа IUser,так как уже вышли из аккаунта
+
         }
 
 

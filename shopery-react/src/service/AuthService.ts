@@ -18,4 +18,9 @@ export default class AuthService{
 
     }
 
+    // функция для запроса на выход из аккаунта,указываем тип возвращаемых данных Promise<void>(что промис ничего не возвращает)
+    static async logout():Promise<void>{
+        return $api.post('/logout');  // используем наш instance axios(наш axios с определенными настройками для работы) и указываем здесь post(post запрос) на эндпоинт /logout для выхода из аккаунта
+    }
+
 }

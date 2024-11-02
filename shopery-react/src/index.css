@@ -544,7 +544,7 @@ a {
 }
 
 .sectionCatalogTop {
-  padding: 48px;
+  padding: 48px 0;
   background-image: url('../public/images/sectionCatalogTop/Breadcrumbs.png');
   background-repeat: no-repeat;
   background-position: center;
@@ -1802,4 +1802,52 @@ a {
   100%{
     transform: rotate(360deg) scale(1.2);
   }
+}
+
+.sectionUserPage__inner{
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  gap:24px;
+}
+
+.sectionUserPage__leftBar{
+  padding: 24px 0 12px;
+  border: 1px solid #E6E6E6;
+  border-radius: 8px;
+}
+
+.sectionUserPage__leftBar-title{
+  font-size: 20px;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin: 0 0 16px 20px;
+}
+
+.leftBar__list-item{
+  padding: 16px 0 16px 20px;
+  display: flex;
+  align-items: center;
+  gap:10px;
+  cursor: pointer;
+  transition:all .5s ease;
+}
+
+.leftBar__list-item:hover{
+  background-color: #dfdfdf;
+}
+
+.leftBar__list-item--active{
+  background-color: #EDF2EE;
+  border-left: 1px solid #20B526;
+}
+
+.leftBar__list-text{
+  font-size: 16px;
+  font-weight: 400;
+  color: #707070;
+  transition:color .5s ease;
+}
+
+.leftBar__list-text--active{
+  color: #1A1A1A;
 }
