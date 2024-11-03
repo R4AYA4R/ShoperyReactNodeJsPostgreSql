@@ -5,8 +5,9 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
 import { API_URL } from "../http/http";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
+import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
 const UserPage = ()=>{
 
@@ -15,7 +16,6 @@ const UserPage = ()=>{
     const {isAuth,user,isLoading} = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
     const {checkAuthUser,setLoadingUser,logoutUser} = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
-
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
     const checkAuth =async ()=>{
@@ -109,7 +109,7 @@ const UserPage = ()=>{
             {/* передаем в пропсах параметр nameUserTop с определенным значением,чтобы отображать разный текст в одном компоненте SectionUserTop */}
             <SectionUserTop nameUserTop="User Account"/>
 
-            <section className="sectionUserPage">
+            <section className="sectionUserPage" >
                 <div className="container">
                     <div className="sectionUserPage__inner">
                         <div className="sectionUserPage__leftBar">
@@ -132,9 +132,14 @@ const UserPage = ()=>{
                         <div className="sectionUserPage__mainBlock">
                            
                             {tab === 'dashboard' && 
-                                <>
-                                    <p>userDashboard</p>
-                                </>
+                                <div className="sectionUserPage__dashboard">
+                                    <div className="sectionUserPage__dashboard-userInfo">
+                                        <img src="/images/sectionUserPage/Ellipse 5.png" alt="" className="dashboard__userInfo-img" />
+                                        <h3 className="dashboard__userInfo-name">{user.userName}</h3>
+                                        <p className="dashboard__userInfo-email">{user.email}</p>
+                                        <button className="dashboard__userInfo-btn" onClick={()=>setTab('settings')}>Edit Profile</button>
+                                    </div>
+                                </div>
                             }
 
                             {tab === 'settings' && 

@@ -1581,6 +1581,7 @@ a {
   border: none;
   cursor: pointer;
   transition: all .5s ease;
+  font-family: 'Poppins', sans-serif;
 }
 
 .tableCart__bottomBlock-btn:hover {
@@ -1638,7 +1639,7 @@ a {
   color: #fff;
   padding: 16px 100px;
   border: none;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   width: 100%;
   cursor: pointer;
@@ -1804,6 +1805,7 @@ a {
   }
 }
 
+
 .sectionUserPage__inner{
   display: grid;
   grid-template-columns: 1fr 4fr;
@@ -1850,4 +1852,44 @@ a {
 
 .leftBar__list-text--active{
   color: #1A1A1A;
+}
+
+.sectionUserPage__dashboard-userInfo{
+  padding: 32px 0;
+  border-radius: 8px;
+  border: 1px solid #E6E6E6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dashboard__userInfo-name{
+  margin-top: 10px;
+  font-size: 20px;
+  font-weight: 500;
+  color: #1A1A1A;
+  margin-bottom: 10px;
+}
+
+.dashboard__userInfo-email{
+  font-size: 14px;
+  font-weight: 400;
+  color: #808080;
+  margin-bottom: 10px;
+}
+
+.dashboard__userInfo-btn{
+  border: none;
+  background-color: #fff;
+  font-size: 16px;
+  font-weight: 500;
+  color: #00B207;
+  font-family: 'Poppins',sans-serif;
+  cursor: pointer;
+  opacity: 1;
+  transition: opacity .5s ease;
+}
+
+.dashboard__userInfo-btn:hover{
+  opacity: 0.7;
 }
