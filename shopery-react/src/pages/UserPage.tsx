@@ -123,7 +123,7 @@ const UserPage = ()=>{
                                     <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__list-img" />
                                     <p className={tab === 'settings' ? "leftBar__list-text leftBar__list-text--active": "leftBar__list-text"}>Settings</p>
                                 </li>
-                                <li className="leftBar__list-item" onClick={logout}>
+                                <li className="leftBar__list-item leftBar__list-itemLogout" onClick={logout}>
                                     <img src="/images/sectionUserPage/dashboard 2 (2).png" alt="" className="leftBar__list-img" />
                                     <p className="leftBar__list-text">Logout</p>
                                 </li>

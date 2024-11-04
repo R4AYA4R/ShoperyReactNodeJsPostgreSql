@@ -3,10 +3,14 @@ import SectionCatalogTop from "../components/SectionCatalogTop";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useLocation, useParams } from "react-router-dom";
-import { IProduct } from "../types/types";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { AuthResponse, IProduct } from "../types/types";
 import SectionProductItemPageTop from "../components/SectionProductItemPageTop";
 import PopularProducts from "../components/PopularProducts";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
+import { API_URL } from "../http/http";
+import { text } from "stream/consumers";
 
 const ProductItemPage = () => {
 
@@ -16,11 +20,17 @@ const ProductItemPage = () => {
 
     const [activeForm, setActiveForm] = useState(false);
 
+    const [errorCommentsForm,setErrorCommentsForm] = useState('');
+
+    const [textFormArea,setTextFormArea] = useState('');
+
     const [inputAmountValue, setInputAmountValue] = useState<number>(1);
 
     const sectionProductItemTopRef = useRef(null);
 
     const onScreen = useIsOnScreen(sectionProductItemTopRef);
+
+    const router = useNavigate(); // используем useNavigate чтобы перекидывать пользователя на определенную страницу
 
     const params = useParams(); // с помощью useParams получаем параметры из url (в данном случае id товара)
 
@@ -35,6 +45,12 @@ const ProductItemPage = () => {
             return response;
         }
     })
+
+
+    const {isAuth,user} = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
+
+    const {checkAuthUser,setLoadingUser} = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
 
     const changeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
         // если текущее значение инпута > 99,то изменяем состояние инпута цены на 99,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
@@ -78,6 +94,79 @@ const ProductItemPage = () => {
         setActiveForm(false);
 
     }, [pathname])
+
+
+    // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
+    const checkAuth =async ()=>{
+
+        setLoadingUser(true); // изменяем поле isLoading состояния пользователя в userSlice на true(то есть пошла загрузка)
+
+        // оборачиваем в try catch,чтобы отлавливать ошибки
+        try{
+
+            // здесь используем уже обычный axios,указываем тип в generic,что в ответе от сервера ожидаем наш тип данных AuthResponse,указываем наш url до нашего роутера(/api) на бэкэнде(API_URL мы импортировали из другого нашего файла) и через / указываем refresh(это тот url,где мы выдаем access и refresh токены на бэкэнде),и вторым параметром указываем объект опций,указываем поле withCredentials true(чтобы автоматически с запросом отправлялись cookies)
+            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`,{withCredentials:true});
+
+            console.log(response);
+
+            checkAuthUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
+
+        } catch(e:any) {
+
+            console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера  из поля message из поля data у response у e
+
+        } finally{
+            // в блоке finally будет выполнен код в независимости от try catch(то есть в любом случае,даже если будет ошибка)
+            setLoadingUser(false); // изменяем поле isLoading состояния пользователя в userSlice на false(то есть загрузка закончена)
+        }
+
+    }
+
+
+
+    // при запуске сайта будет отработан код в этом useEffect
+    useEffect(()=>{
+
+        // если localStorage.getItem('token') true,то есть по ключу token в localStorage что-то есть
+        if(localStorage.getItem('token')) {
+
+            checkAuth(); // вызываем нашу функцию checkAuth(),которую описали выше для проверки авторизован ли пользователь
+
+        }
+
+    },[])
+
+    const addCommentsBtn = ()=>{
+
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то показываем форму,в другом случае перекидываем пользователя на страницу авторизации
+        if(user.userName){
+            setActiveForm(true); // изменяем состояние активной формы,то есть показываем форму для создания комментария
+        }else{
+            router('/user'); // перекидываем пользователя на страницу авторизации (/user в данном случае)
+        }
+
+    }
+
+    const formCommentsHandler = () => {
+
+        // если значение textarea (.trim()-убирает из строки пробелы,чтобы нельзя было ввести только пробел) в форме комментария будет по количеству символов меньше или равно 10,то будем изменять состояние ErrorCommentsForm(то есть показывать ошибку и не отправлять комментарий),в другом случае очищаем поля textarea,activeStars(рейтинг,который пользователь указал в форме) и убираем форму
+        if(textFormArea.trim().length <= 10){
+            setErrorCommentsForm('Comment must be more than 10 characters');
+        }else if(activeStars === 0){
+            // если состояние рейтинга в форме равно 0,то есть пользователь не указал рейтинг,то показываем ошибку
+            setErrorCommentsForm('Enter rating');
+        }else{
+
+            // здесь указываем функцию создания комментария в базе данных
+
+            setTextFormArea('');
+            setActiveStars(0);
+            setActiveForm(false);
+            setErrorCommentsForm('');
+
+        }
+
+    }
 
     return (
         <main className="main">
@@ -230,14 +319,14 @@ const ProductItemPage = () => {
                                     <div className="reviews__mainBlock-rightBlock">
 
                                         <div className={activeForm ? "reviews__rightBlock-btnBlock reviews__rightBlock-btnBlockNone" : "reviews__rightBlock-btnBlock"}>
-                                            <button className="reviews__top-addBtn" onClick={() => setActiveForm(true)}>Add Review</button>
+                                            <button className="reviews__top-addBtn" onClick={addCommentsBtn}>Add Review</button>
                                         </div>
 
                                         <div className={activeForm ? "reviews__rightBlock-form reviews__rightBlock-form--active" : "reviews__rightBlock-form"}>
                                             <div className="reviews__form-topBlock">
                                                 <div className="reviews__form-topUserBlock">
                                                     <img src="/images/sectionProductsItemTop/Profile.png" alt="" className="topUserBlock__img" />
-                                                    <h1 className="topUserBlock-title">User</h1>
+                                                    <h1 className="topUserBlock-title">{user.userName}</h1>
                                                 </div>
                                                 <div className="reviews__form-topStars">
                                                     {/* если activeStars равно 0,то показываем серую картинку звездочки,в другом случае оранжевую */}
@@ -251,9 +340,12 @@ const ProductItemPage = () => {
                                                 </div>
                                             </div>
                                             <div className="reviews__form-main">
-                                                <textarea className="reviews__form-textArea" placeholder="Enter your comment"></textarea>
+                                                <textarea className="reviews__form-textArea" placeholder="Enter your comment" value={textFormArea} onChange={(e)=>setTextFormArea(e.target.value)}></textarea>
                                             </div>
-                                            <button className="reviews__form-submitBtn">Save Review</button>
+
+                                            {errorCommentsForm !== '' && <p className="formErrorTextComments">{errorCommentsForm}</p>}
+
+                                            <button className="reviews__form-submitBtn" onClick={formCommentsHandler}>Save Review</button>
                                         </div>
                                     </div>
                                 </div>
