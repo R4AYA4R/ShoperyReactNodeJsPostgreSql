@@ -14,6 +14,11 @@ router.get('/getProductsCatalog/:id', productController.getProductId);
 router.get('/getProductsCatalogWithouLimit', productController.getProductsCatalogWithoutLimit); 
 
 
+router.post('/createComment',userController.createComment); // создаем post запрос на создание комментария в базе данных
+
+router.get('/getCommentsForProduct',userController.getCommentsForProduct); // создаем get запрос на получение комментариев для определенного товара
+
+
 router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min:3,max:32}),

@@ -51,5 +51,13 @@ export interface AuthResponse{
     accessToken:string,
     refreshToken:string,
     user:IUser  // указываем в поле user объект(с теми полями, которые описаны в IUser) на основе нашего интерфеса IUser
+}
 
+export interface IComment{
+    id:number,
+    name:string,
+    text:string,
+    rating:number,
+    productId:number,
+    createdTime:string
 }

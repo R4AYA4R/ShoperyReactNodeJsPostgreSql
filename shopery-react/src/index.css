@@ -1350,6 +1350,10 @@ a {
   color: #1A1A1A;
 }
 
+.reviews__leftBlock-item{
+  margin-bottom: 30px;
+}
+
 .reviews__leftBlock-itemTop {
   display: flex;
   align-items: center;

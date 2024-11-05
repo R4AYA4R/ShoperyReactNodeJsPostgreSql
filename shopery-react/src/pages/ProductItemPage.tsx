@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import SectionCatalogTop from "../components/SectionCatalogTop";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { AuthResponse, IProduct } from "../types/types";
+import { AuthResponse, IComment, IProduct } from "../types/types";
 import SectionProductItemPageTop from "../components/SectionProductItemPageTop";
 import PopularProducts from "../components/PopularProducts";
 import { useTypedSelector } from "../hooks/useTypedSelector";
@@ -20,9 +20,9 @@ const ProductItemPage = () => {
 
     const [activeForm, setActiveForm] = useState(false);
 
-    const [errorCommentsForm,setErrorCommentsForm] = useState('');
+    const [errorCommentsForm, setErrorCommentsForm] = useState('');
 
-    const [textFormArea,setTextFormArea] = useState('');
+    const [textFormArea, setTextFormArea] = useState('');
 
     const [inputAmountValue, setInputAmountValue] = useState<number>(1);
 
@@ -47,9 +47,34 @@ const ProductItemPage = () => {
     })
 
 
-    const {isAuth,user} = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
+    const { data: dataComments, refetch: refetchComments } = useQuery({
+        queryKey: ['commentsForProduct'],
+        queryFn: async () => {
+            // делаем запрос на сервер на получение комментариев для определенного товара,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IComment,и указываем,что это массив IComment[]),указываем query параметр productId со значением id товара на этой странице
+            const response = await axios.get<IComment[]>(`${API_URL}/getCommentsForProduct?productId=${data?.data.id}`);
 
-    const {checkAuthUser,setLoadingUser} = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+            return response;
+        }
+    })
+
+    // функция для post запроса на сервер с помощью useMutation(react query),создаем комментарий на сервере,берем mutate у useMutation,чтобы потом вызвать эту функцию запроса на сервер в нужный момент
+    const { mutate } = useMutation({
+        mutationKey: ['create comment'],
+        mutationFn: async (comment: IComment) => {
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IComment),но здесь не обязательно указывать тип,делаем тип объекта,который мы передаем на сервер as IComment(id вручную не указываем,чтобы он сам генерировался автоматически на сервере
+            await axios.post<IComment>(`${API_URL}/createComment`, comment);
+        },
+
+        // при успешной мутации переобновляем массив комментариев
+        onSuccess() {
+            refetchComments();
+        }
+    })
+
+
+    const { isAuth, user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
+
+    const { checkAuthUser, setLoadingUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
 
     const changeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -97,25 +122,25 @@ const ProductItemPage = () => {
 
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
-    const checkAuth =async ()=>{
+    const checkAuth = async () => {
 
         setLoadingUser(true); // изменяем поле isLoading состояния пользователя в userSlice на true(то есть пошла загрузка)
 
         // оборачиваем в try catch,чтобы отлавливать ошибки
-        try{
+        try {
 
             // здесь используем уже обычный axios,указываем тип в generic,что в ответе от сервера ожидаем наш тип данных AuthResponse,указываем наш url до нашего роутера(/api) на бэкэнде(API_URL мы импортировали из другого нашего файла) и через / указываем refresh(это тот url,где мы выдаем access и refresh токены на бэкэнде),и вторым параметром указываем объект опций,указываем поле withCredentials true(чтобы автоматически с запросом отправлялись cookies)
-            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`,{withCredentials:true});
+            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true });
 
             console.log(response);
 
             checkAuthUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
 
-        } catch(e:any) {
+        } catch (e: any) {
 
             console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера  из поля message из поля data у response у e
 
-        } finally{
+        } finally {
             // в блоке finally будет выполнен код в независимости от try catch(то есть в любом случае,даже если будет ошибка)
             setLoadingUser(false); // изменяем поле isLoading состояния пользователя в userSlice на false(то есть загрузка закончена)
         }
@@ -125,23 +150,31 @@ const ProductItemPage = () => {
 
 
     // при запуске сайта будет отработан код в этом useEffect
-    useEffect(()=>{
+    useEffect(() => {
 
         // если localStorage.getItem('token') true,то есть по ключу token в localStorage что-то есть
-        if(localStorage.getItem('token')) {
+        if (localStorage.getItem('token')) {
 
             checkAuth(); // вызываем нашу функцию checkAuth(),которую описали выше для проверки авторизован ли пользователь
 
         }
 
-    },[])
+    }, [])
 
-    const addCommentsBtn = ()=>{
+
+    // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара
+    useEffect(() => {
+
+        refetchComments();
+
+    }, [dataComments?.data, data?.data])
+
+    const addCommentsBtn = () => {
 
         // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то показываем форму,в другом случае перекидываем пользователя на страницу авторизации
-        if(user.userName){
+        if (user.userName) {
             setActiveForm(true); // изменяем состояние активной формы,то есть показываем форму для создания комментария
-        }else{
+        } else {
             router('/user'); // перекидываем пользователя на страницу авторизации (/user в данном случае)
         }
 
@@ -150,14 +183,20 @@ const ProductItemPage = () => {
     const formCommentsHandler = () => {
 
         // если значение textarea (.trim()-убирает из строки пробелы,чтобы нельзя было ввести только пробел) в форме комментария будет по количеству символов меньше или равно 10,то будем изменять состояние ErrorCommentsForm(то есть показывать ошибку и не отправлять комментарий),в другом случае очищаем поля textarea,activeStars(рейтинг,который пользователь указал в форме) и убираем форму
-        if(textFormArea.trim().length <= 10){
+        if (textFormArea.trim().length <= 10) {
             setErrorCommentsForm('Comment must be more than 10 characters');
-        }else if(activeStars === 0){
+        } else if (activeStars === 0) {
             // если состояние рейтинга в форме равно 0,то есть пользователь не указал рейтинг,то показываем ошибку
             setErrorCommentsForm('Enter rating');
-        }else{
+        } else {
+
+            const date = new Date(); // создаем объект на основе класса Date(класс в javaScript для работы с датой и временем)
+
+            // помещаем в переменную showTime значение времени,когда создаем комментарий, date.getDate() - показывает текущее число, getMonth() - считает месяцы с нуля(январь нулевой,февраль первый и тд),поэтому указываем date.getMonth() + 1(увеличиваем на 1 и получаем текущий месяц) и потом приводим получившееся значение к формату строки с помощью toString(), getFullYear() - текущий год 
+            const showTime = date.getDate() + '.' + (date.getMonth() + 1).toString() + '.' + date.getFullYear();
 
             // здесь указываем функцию создания комментария в базе данных
+            mutate({ name: user.userName, text: textFormArea, rating: activeStars, productId: data?.data.id, createdTime: showTime } as IComment); // вызываем функцию post запроса на сервер,создавая комментарий,разворачивая в объект нужные поля для комментария и давая этому объекту тип as IComment(вручную не указываем id,чтобы он автоматически создавался на сервере), указываем поле productId со значением как у id товара на этой странице,чтобы в базе данных связать этот товар с комментарием
 
             setTextFormArea('');
             setActiveStars(0);
@@ -292,28 +331,34 @@ const ProductItemPage = () => {
                                 <div className="reviews__mainBlock">
                                     <div className="reviews__mainBlock-leftBlock">
 
-                                        <div className="reviews__leftBlock-item">
-                                            <div className="reviews__leftBlock-itemTop">
-                                                <div className="leftBlock__itemTop-userBlock">
-                                                    <img src="/images/sectionProductsItemTop/Profile.png" alt="" className="itemTop__userBlock-img" />
-                                                    <div className="itemTop__userBlock-userInfo">
-                                                        <h4 className="userBlock__userInfo-title">Jane Cooper</h4>
-                                                        <div className="reviews__form-topStars">
-                                                            <img src="/images/sectionDeals/Star 4.png" alt="" className="topStars__img"/>
-                                                            <img src="/images/sectionDeals/Star 4.png" alt="" className="topStars__img"/>
-                                                            <img src="/images/sectionDeals/Star 4.png" alt="" className="topStars__img"/>
-                                                            <img src="/images/sectionDeals/Star 4.png" alt="" className="topStars__img"/>
-                                                            <img src="/images/sectionDeals/Star 5.png" alt="" className="topStars__img"/>
+                                        {dataComments?.data.length ?
+                                            dataComments.data.map((comment) =>
+                                                <div className="reviews__leftBlock-item" key={comment.id}>
+                                                    <div className="reviews__leftBlock-itemTop">
+                                                        <div className="leftBlock__itemTop-userBlock">
+                                                            <img src="/images/sectionProductsItemTop/Profile.png" alt="" className="itemTop__userBlock-img" />
+                                                            <div className="itemTop__userBlock-userInfo">
+                                                                <h4 className="userBlock__userInfo-title">{comment.name}</h4>
+                                                                <div className="reviews__form-topStars">
+                                                                    <img src={comment.rating === 0 ? "/images/sectionDeals/Star 5.png" : "/images/sectionDeals/Star 4.png"} alt="" className="topStars__img" />
+                                                                    <img src={comment.rating >= 2 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="topStars__img" />
+                                                                    <img src={comment.rating >= 3 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="topStars__img" />
+                                                                    <img src={comment.rating >= 4 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="topStars__img" />
+                                                                    <img src={comment.rating >= 5 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="topStars__img" />
+                                                                </div>
+                                                            </div>
                                                         </div>
+                                                        <p className="leftBlock__itemTop-dataText">{comment.createdTime}</p>
+                                                    </div>
+                                                    <div className="reviews__leftBlock__itemMain">
+                                                        <p className="leftBlock__itemMain-text">{comment.text}</p>
                                                     </div>
                                                 </div>
-                                                <p className="leftBlock__itemTop-dataText">30 Apr, 2021</p>
+                                            ) :
+                                            <div className="reviews__top">
+                                                <h4 className="reviews__top-notFoundTitle">No reviews yet.</h4>
                                             </div>
-                                            <div className="reviews__leftBlock__itemMain">
-                                                <p className="leftBlock__itemMain-text">200+ Canton Pak Choi Bok Choy Chinese Cabbage Seeds Heirloom Non-GMO Productive Brassica rapa VAR. chinensis, a.k.a. Canton's Choice, Bok Choi, from USA
-                                                .</p>
-                                            </div>
-                                        </div>
+                                        }
 
                                     </div>
                                     <div className="reviews__mainBlock-rightBlock">
@@ -340,7 +385,7 @@ const ProductItemPage = () => {
                                                 </div>
                                             </div>
                                             <div className="reviews__form-main">
-                                                <textarea className="reviews__form-textArea" placeholder="Enter your comment" value={textFormArea} onChange={(e)=>setTextFormArea(e.target.value)}></textarea>
+                                                <textarea className="reviews__form-textArea" placeholder="Enter your comment" value={textFormArea} onChange={(e) => setTextFormArea(e.target.value)}></textarea>
                                             </div>
 
                                             {errorCommentsForm !== '' && <p className="formErrorTextComments">{errorCommentsForm}</p>}

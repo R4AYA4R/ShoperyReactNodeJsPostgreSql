@@ -1,5 +1,5 @@
 
-import { DataTypes } from "sequelize"; // импортируем DataTypes у sequelize,чтобы описывать типы полей для таблиц в базе данных postgreSql
+import { DataTypes, STRING } from "sequelize"; // импортируем DataTypes у sequelize,чтобы описывать типы полей для таблиц в базе данных postgreSql
 
 import db from "../db.js"; // указываем здесь расширение файла .js,иначе не находит файл и выдает ошибку
 
@@ -89,7 +89,9 @@ const Comment = db.define('comments',{
 
     text:{type:DataTypes.STRING,allowNull:false},
 
-    rating:{type:DataTypes.FLOAT, allowNull:false}
+    rating:{type:DataTypes.FLOAT, allowNull:false},
+
+    createdTime:{type:DataTypes.STRING, allowNull:false }
 
 })
 
@@ -130,5 +132,6 @@ export default {
     Taste,
     User,
     Role,
-    Token
+    Token,
+    Comment
 }
