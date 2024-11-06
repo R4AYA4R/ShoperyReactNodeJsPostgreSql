@@ -392,7 +392,7 @@ const Catalog = () => {
                                 </div>
 
                                 <div className="mainBlock__filters-amountBlock">
-                                    <p className="filters__amountBlock-amount">{data?.data.rows.length}</p>
+                                    <p className="filters__amountBlock-amount">{data?.data.count}</p>
                                     <p className="filters__amountBlock-amountSubText">Results found.</p>
                                 </div>
 

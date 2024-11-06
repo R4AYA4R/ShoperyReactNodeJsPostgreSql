@@ -61,3 +61,8 @@ export interface IComment{
     productId:number,
     createdTime:string
 }
+
+export interface IUpdateRatingObject{
+    rating:number,
+    id:number | undefined
+}

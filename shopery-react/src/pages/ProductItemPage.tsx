@@ -4,7 +4,7 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { AuthResponse, IComment, IProduct } from "../types/types";
+import { AuthResponse, IComment, IProduct, IUpdateRatingObject } from "../types/types";
 import SectionProductItemPageTop from "../components/SectionProductItemPageTop";
 import PopularProducts from "../components/PopularProducts";
 import { useTypedSelector } from "../hooks/useTypedSelector";
@@ -68,6 +68,19 @@ const ProductItemPage = () => {
         // при успешной мутации переобновляем массив комментариев
         onSuccess() {
             refetchComments();
+        }
+    })
+
+    const { mutate: mutateRating } = useMutation({
+        mutationKey: ['updateRatingProduct'],
+        mutationFn: async (product:IProduct) => {
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,передаем просто объект product как тело запроса
+            await axios.put<IProduct>(`${API_URL}/updateProductRating`, product);
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем данные товара
+        onSuccess() {
+            refetch();
         }
     })
 
@@ -169,6 +182,23 @@ const ProductItemPage = () => {
 
     }, [dataComments?.data, data?.data])
 
+
+    useEffect(() => {
+
+        const commentsRating = dataComments?.data.reduce((prev, curr) => prev + curr.rating, 0); // проходимся по массиву объектов комментариев для товара на этой странице и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).rating ,это чтобы посчитать общую сумму всего рейтинга от каждого комментария и потом вывести среднее значение
+
+        //если commentsRating true(эта переменная есть и равна чему-то) и dataComments?.data.length true(этот массив отфильтрованных комментариев есть),то считаем средний рейтинг всех комментариев и записываем его в переменную,а потом делаем запрос на сервер для обновления рейтинга у объекта товара в базе данных
+        if (commentsRating && dataComments?.data.length) {
+
+            const commentsRatingMiddle = commentsRating / dataComments?.data.length;
+
+            // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle
+            mutateRating({...data?.data,rating:commentsRatingMiddle} as IProduct);
+
+        }
+
+    }, [dataComments?.data])
+
     const addCommentsBtn = () => {
 
         // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то показываем форму,в другом случае перекидываем пользователя на страницу авторизации
@@ -217,11 +247,18 @@ const ProductItemPage = () => {
                         <div className="sectionProductItemTop__info">
                             <h2 className="sectionProductItemTop__info-title">{data?.data.name}</h2>
                             <div className="deals__item-stars">
-                                <img src="/images/sectionDeals/Star 4.png" alt="" className="stars__itemOrange stars__ProductItemPage" />
-                                <img src="/images/sectionDeals/Star 4.png" alt="" className="stars__itemOrange stars__ProductItemPage" />
-                                <img src="/images/sectionDeals/Star 4.png" alt="" className="stars__itemOrange stars__ProductItemPage" />
-                                <img src="/images/sectionDeals/Star 4.png" alt="" className="stars__itemOrange stars__ProductItemPage" />
-                                <img src="/images/sectionDeals/Star 5.png" alt="" className="stars__itemOrange stars__ProductItemPage" />
+
+                                {/* если data?.data true,то есть данные о товаре на текущей странице есть(делаем эту проверку,потому что без нее ошибка,типа data?.data может быть undefined),и в src у элементов img(картинок) указываем условие,какую звезду рейтинга отображать в зависимости от значения рейтинга товара */}
+                                {data?.data &&
+                                    <>
+                                        <img src={data?.data.rating === 0 ? "/images/sectionDeals/Star 5.png" : "/images/sectionDeals/Star 4.png"} alt="" className="stars__itemOrange stars__ProductItemPage" />
+                                        <img src={data?.data.rating >= 2 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="stars__itemOrange stars__ProductItemPage" />
+                                        <img src={data?.data.rating >= 3 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="stars__itemOrange stars__ProductItemPage" />
+                                        <img src={data?.data.rating >= 4 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="stars__itemOrange stars__ProductItemPage" />
+                                        <img src={data?.data.rating >= 5 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="stars__itemOrange stars__ProductItemPage" />
+                                    </>
+                                }
+
                             </div>
                             <p className="sectionProductItemTop__info-price">${data?.data.price}</p>
                             <div className="sectionProductItemTop__info-categoryBlock">
