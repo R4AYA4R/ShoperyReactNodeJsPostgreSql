@@ -75,6 +75,11 @@ const Catalog = () => {
                 url += `&tasteId=3`;
             }
 
+            // если selectValue(состояние для сортировки товаров) не равно пустой строке,то добавляем к url еще параметры sort и order в которые передаем значения,в параметр sort передаем название поля,по которому будет сортировка объектов из базы данных(в данном случае указываем значение состояния selectValue,в нем хранится название поля,и это значение мы приводим к нижнему регистру букв с помощью toLowerCase(),чтобы в названии поля были все маленькие буквы,мы это обрабатываем на бэкэнде в node js),а в параметр order указываем значение desc(то есть сортировка по убыванию,от большего к меньшему)
+            if (selectValue !== ''){
+                url += `&sort=${selectValue.toLowerCase()}&order=DESC`
+            }
+
             // указываем здесь тип данных,которые приходят от сервера как тип на основе нашего интерфейса IProductData
             const response = await axios.get<IProductData>(url,{
                 params:{
@@ -161,7 +166,7 @@ const Catalog = () => {
 
         refetch(); // делаем повторный запрос на получение товаров при изменении searchValue(значение инпута поиска),filterCategories и других фильтров,а также при изменении состояния страницы и data?.data,данных о товарах и общее количество товаров,которые приходят от сервера
 
-    }, [data?.data,searchValue, filterCategories, filterPrice, filterTaste,page])
+    }, [data?.data,searchValue, filterCategories, filterPrice, filterTaste,page,selectValue])
 
     useEffect(()=>{
 
@@ -170,12 +175,12 @@ const Catalog = () => {
     },[searchValue])
 
 
-    // при изменении фильтров изменяем состояние текущей страницы на первую
+    // при изменении фильтров и состояния сортировки(selectValue в данном случае) изменяем состояние текущей страницы на первую
     useEffect(()=>{
 
         setPage(1);
 
-    },[filterCategories,filterPrice,filterTaste])
+    },[filterCategories,filterPrice,filterTaste,selectValue])
 
     let pagesArray = getPagesArray(totalPages, page); // помещаем в переменную pagesArray массив страниц пагинации,указываем переменную pagesArray как let,так как она будет меняться в зависимости от проверок в функции getPagesArray
 
