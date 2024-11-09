@@ -1,6 +1,13 @@
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { AuthResponse } from "../types/types";
+import { API_URL } from "../http/http";
+import axios from "axios";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
 
 const Header = () => {
+
     return (
         <header className="header">
             <div className="container">
@@ -11,13 +18,13 @@ const Header = () => {
                     </NavLink>
                     <ul className="header__menuList">
                         <li className="header__menuList-item">
-                            <NavLink to="/" className={({isActive})=> isActive ? "menuList__item-link menuList__item-linkActive" : "menuList__item-link"}>Home</NavLink>
+                            <NavLink to="/" className={({ isActive }) => isActive ? "menuList__item-link menuList__item-linkActive" : "menuList__item-link"}>Home</NavLink>
                         </li>
                         <li className="header__menuList-item">
-                            <NavLink to="/catalog" className={({isActive})=> isActive ? "menuList__item-link menuList__item-linkActive" : "menuList__item-link"}>Catalog</NavLink>
+                            <NavLink to="/catalog" className={({ isActive }) => isActive ? "menuList__item-link menuList__item-linkActive" : "menuList__item-link"}>Catalog</NavLink>
                         </li>
                         <li className="header__menuList-item">
-                            <NavLink to="/aboutUs" className={({isActive})=> isActive ? " menuList__item-linkActive" : "menuList__item-link"}>About Us</NavLink>
+                            <NavLink to="/aboutUs" className={({ isActive }) => isActive ? " menuList__item-linkActive" : "menuList__item-link"}>About Us</NavLink>
                         </li>
                         <li className="header__menuList-item menuList__item-cartAndUser">
                             <NavLink to="/cart" className="menuList__item-link menuList__item-linkCart">

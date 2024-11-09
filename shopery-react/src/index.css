@@ -1916,3 +1916,16 @@ a {
   font-size: 16px;
   margin-bottom: 16px;
 }
+
+.textAlreadyInCart{
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1A1A;
+}
+
+.textEmptyCart{
+  font-size: 18px;
+  font-weight: 600;
+  color: #1A1A1A;
+  padding: 16px 20px;
+}

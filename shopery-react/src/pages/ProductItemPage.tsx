@@ -4,7 +4,7 @@ import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { AuthResponse, IComment, IProduct, IUpdateRatingObject } from "../types/types";
+import { AuthResponse, IComment, IProduct, IProductCart, IUpdateRatingObject } from "../types/types";
 import SectionProductItemPageTop from "../components/SectionProductItemPageTop";
 import PopularProducts from "../components/PopularProducts";
 import { useTypedSelector } from "../hooks/useTypedSelector";
@@ -25,7 +25,7 @@ const ProductItemPage = () => {
     const [textFormArea, setTextFormArea] = useState('');
 
     const [inputAmountValue, setInputAmountValue] = useState<number>(1);
-
+ 
     const sectionProductItemTopRef = useRef(null);
 
     const onScreen = useIsOnScreen(sectionProductItemTopRef);
@@ -47,6 +47,9 @@ const ProductItemPage = () => {
     })
 
 
+    const [totalPriceProduct,setTotalPriceProduct] = useState(data?.data.price);
+
+
     const { data: dataComments, refetch: refetchComments } = useQuery({
         queryKey: ['commentsForProduct'],
         queryFn: async () => {
@@ -56,6 +59,8 @@ const ProductItemPage = () => {
             return response;
         }
     })
+
+
 
     // функция для post запроса на сервер с помощью useMutation(react query),создаем комментарий на сервере,берем mutate у useMutation,чтобы потом вызвать эту функцию запроса на сервер в нужный момент
     const { mutate } = useMutation({
@@ -73,7 +78,7 @@ const ProductItemPage = () => {
 
     const { mutate: mutateRating } = useMutation({
         mutationKey: ['updateRatingProduct'],
-        mutationFn: async (product:IProduct) => {
+        mutationFn: async (product: IProduct) => {
             // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,передаем просто объект product как тело запроса
             await axios.put<IProduct>(`${API_URL}/updateProductRating`, product);
         },
@@ -88,6 +93,10 @@ const ProductItemPage = () => {
     const { isAuth, user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
     const { checkAuthUser, setLoadingUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+
+  
+
 
 
     const changeInputValue = (e: ChangeEvent<HTMLInputElement>) => {
@@ -119,6 +128,19 @@ const ProductItemPage = () => {
             setInputAmountValue(99);
         }
     }
+
+    // при изменении inputAmountValue и data?.data(в данном случае данные товара на этой странице,полученные с сервера,чтобы при запуске страницы сайта уже было значение в totalPriceProduct,без этого стартовое значение totalPriceProduct не становится на data?.data.price) изменяем состояние totalPriceProduct
+    useEffect(()=>{
+
+        // если data?.data.price true(то есть она есть),то меняем значение totalPriceProduct,в данном случае делаем эту проверку,так как выдает ошибку,что data?.data.price может быть undefined(то есть ее может не быть)
+        if(data?.data.price){
+
+            setTotalPriceProduct(data?.data.price * inputAmountValue);
+
+        }
+
+    },[inputAmountValue,data?.data])
+
 
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта
     useEffect(() => {
@@ -175,6 +197,34 @@ const ProductItemPage = () => {
     }, [])
 
 
+    const { data: dataProductsCart,refetch:dataProductsCartRefetch } = useQuery({
+        queryKey: ['productsCart'],
+        queryFn: async () => {
+            // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя
+            const response = await axios.get<IProductCart[]>(`${API_URL}/getAllProductsBasket?userId=${user.id}`);
+
+            return response;
+        }
+    })
+
+    const { mutate: mutateAddProductCart } = useMutation({
+        mutationKey: ['add productCart'],
+        mutationFn: async (productCart: IProductCart) => {
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProductCart),но здесь не обязательно указывать тип
+            await axios.post<IProductCart>(`${API_URL}/createProductBasket`, productCart);
+        },
+
+        // при успешной мутации,то есть в данном случае при успшешном добавлении товара в корзину обновляем dataProductsCart(массив объектов корзины),чтобы сразу показывалось изменение в корзине товаров,если так не сделать,то текст Already in Cart(что товар уже в корзине) будет показан только после обновления страницы,а не сразу,так как массив объектов корзины еще не переобновился
+        onSuccess(){
+            dataProductsCartRefetch();
+        }
+    })
+
+
+    const isExistsBasket = dataProductsCart?.data.some(p => p.name === data?.data.name); // делаем проверку методом some и результат записываем в переменную isExistsBasket,если в dataProductsCart(в массиве объектов корзины) есть элемент(объект) name которого равен data?.data name(то есть name этого товара на этой странице),в итоге в isExistsBasket будет помещено true или false в зависимости от проверки методом some
+
+
+
     // при изменении массива комментариев и данных товара(data?.data) на этой странице,переобновляем массив комментариев для этого товара
     useEffect(() => {
 
@@ -193,7 +243,7 @@ const ProductItemPage = () => {
             const commentsRatingMiddle = commentsRating / dataComments?.data.length;
 
             // делаем запрос на изменение рейтинга у товара,разворачиваем все поля товара текущей страницы(data?.data) и поле rating изменяем на commentsRatingMiddle
-            mutateRating({...data?.data,rating:commentsRatingMiddle} as IProduct);
+            mutateRating({ ...data?.data, rating: commentsRatingMiddle } as IProduct);
 
         }
 
@@ -237,6 +287,26 @@ const ProductItemPage = () => {
 
     }
 
+
+    const addToCartBtn = () => {
+
+        console.log(user.userName)
+
+        // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то помещаем товар в корзину,в другом случае перекидываем пользователя на страницу авторизации
+        if(user.userName){
+
+            if(data?.data){
+
+                mutateAddProductCart({name:data.data.name,categoryId:data.data.categoryId,amount:inputAmountValue,image:data.data.image,price:data.data.price,priceFilter:data.data.priceFilter,rating:data.data.rating,tasteId:data.data.tasteId,totalPrice:totalPriceProduct,usualProductId:data.data.id,userId:user.id} as IProductCart); // передаем в addProductBasket объект типа IProductCart только таким образом,разворачивая в объект все необходимые поля(то есть наш product,в котором полe name,делаем поле name со значением,как и у этого товара name(data?.data.name) и остальные поля также,кроме поля amount и totalPrice,их мы изменяем и указываем как значения inputAmountValue(инпут с количеством) и totalPriceProduct(состояние цены,которое изменяется при изменении inputAmountValue)),указываем тип этого объекта как созданный нами тип as IProductCart,при создании на сервере не указываем конкретное значение id,чтобы он сам автоматически генерировался на сервере и потом можно было удалить этот объект, добавляем поле userId со значением user.id(то есть со значением id пользователя,чтобы потом показывать товары в корзине для каждого конкретного пользователя,у которого id будет равен полю userId у этого товара),указываем usualProductId со значением data?.data.id,чтобы потом в корзине можно было перейти на страницу товара в магазине по этому usualProductId,а сам id корзины товара не указываем,чтобы он автоматически правильно генерировался,так как делаем показ товаров по-разному для конкретных пользователей(то есть как и должно быть),иначе ошибка
+
+            }
+
+        }else{
+            router('/user'); // перекидываем пользователя на страницу авторизации (/user в данном случае)
+        }
+
+    }
+
     return (
         <main className="main">
             <SectionProductItemPageTop product={data?.data} />
@@ -260,7 +330,7 @@ const ProductItemPage = () => {
                                 }
 
                             </div>
-                            <p className="sectionProductItemTop__info-price">${data?.data.price}</p>
+                            <p className="sectionProductItemTop__info-price">${totalPriceProduct}</p>
                             <div className="sectionProductItemTop__info-categoryBlock">
                                 <div className="categoryBlock__category">
                                     <p className="categoryBlock__category-text">Category:</p>
@@ -286,19 +356,29 @@ const ProductItemPage = () => {
                             </div>
                             <p className="sectionProductItemTop__info-desc">Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Nulla nibh diam, blandit vel consequat nec, ultrices et ipsum. Nulla varius magna a consequat pulvinar. </p>
                             <div className="sectionProductsItemTop__info-CartBlock">
-                                <div className="info__CartBlock-inputBlock">
-                                    <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnMinus" onClick={handlerMinusBtn}>
-                                        <img src="/images/sectionProductsItemTop/Minus.png" alt="" className="inputBlock__inputBtn-img" />
-                                    </div>
-                                    <input type="number" className="CartBlock__inputBlock-input" onChange={changeInputValue} value={inputAmountValue} />
-                                    <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnPlus" onClick={handlerPlusBtn}>
-                                        <img src="/images/sectionProductsItemTop/plus 1.png" alt="" className="inputBlock__inputBtn-img" />
-                                    </div>
-                                </div>
-                                <button className="info__CartBlock-btn">
-                                    <p className="CartBlock__btn-text">Add to Cart</p>
-                                    <img src="/images/sectionProductsItemTop/Rectangle.png" alt="" className="CartBlock__btn-img" />
-                                </button>
+
+                                {/* если isExistsBasket true(то есть этот товар на этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
+                                {user.userName && isExistsBasket ?
+                                    <h3 className="textAlreadyInCart">Already in Cart</h3>
+                                    : 
+                                    <>
+                                        <div className="info__CartBlock-inputBlock">
+                                            <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnMinus" onClick={handlerMinusBtn}>
+                                                <img src="/images/sectionProductsItemTop/Minus.png" alt="" className="inputBlock__inputBtn-img" />
+                                            </div>
+                                            <input type="number" className="CartBlock__inputBlock-input" onChange={changeInputValue} value={inputAmountValue} />
+                                            <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnPlus" onClick={handlerPlusBtn}>
+                                                <img src="/images/sectionProductsItemTop/plus 1.png" alt="" className="inputBlock__inputBtn-img" />
+                                            </div>
+                                        </div>
+                                        <button className="info__CartBlock-btn" onClick={addToCartBtn}>
+                                            <p className="CartBlock__btn-text">Add to Cart</p>
+                                            <img src="/images/sectionProductsItemTop/Rectangle.png" alt="" className="CartBlock__btn-img" />
+                                        </button>
+                                    </>
+                                }
+
+
                             </div>
                         </div>
                     </div>

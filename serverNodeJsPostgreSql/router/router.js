@@ -19,7 +19,12 @@ router.post('/createComment',userController.createComment); // создаем po
 router.get('/getCommentsForProduct',userController.getCommentsForProduct); // создаем get запрос на получение комментариев для определенного товара
 
 
-router.put('/updateProductRating',userController.updateProductRating);
+router.put('/updateProductRating',userController.updateProductRating); // создаем put запрос для обновления рейтинга товара 
+
+
+router.post('/createProductBasket',userController.addProductToCart); // создаем post запрос для создания товара в корзине
+
+router.get('/getAllProductsBasket',userController.getAllProductsBasket); // создаем get запрос на получение товаров корзины для определенного авторизованного пользователя
 
 
 router.post('/registration',
