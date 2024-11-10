@@ -11,18 +11,19 @@ import ProductItemCart from "../components/ProductItemCart";
 
 const Cart = () => {
 
-    const sectionCartRef = useRef(null);
+    // const sectionCartRef = useRef(null);
 
-    const onScreen = useIsOnScreen(sectionCartRef);
+    // const onScreen = useIsOnScreen(sectionCartRef);
 
     const [totalCheckPrice,setTotalCheckPrice] = useState<number>();
 
     
+    const { updateCartProducts } = useTypedSelector(state => state.cartSlice); // указываем наш слайс(редьюсер) под названием cartSlice и деструктуризируем у него поле состояния updateCartProducts,используя наш типизированный хук для useSelector
 
 
     const { isAuth, user,isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
-    const { checkAuthUser, setLoadingUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { checkAuthUser, setLoadingUser,setUpdateCartProducts } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions,также берем и другие actions для изменения других состояний у других слайсов
 
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
@@ -65,7 +66,8 @@ const Cart = () => {
 
     }, [])
 
-    const { data: dataProductsCart } = useQuery({
+    // берем из useQuery поле isFetching,оно обозначает,что сейчас идет загрузка запроса на сервер,используем его для того,чтобы показать лоадер(загрузку) при загрузке запроса на сервер
+    const { data: dataProductsCart,isFetching } = useQuery({
         queryKey: ['productsCart'],
         queryFn: async () => {
             // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя
@@ -86,25 +88,27 @@ const Cart = () => {
 
 
 
-    // // если состояние загрузки true,то есть идет загрузка,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
-    // if(isLoading){
-    //     // возвращаем тег main с классом main,так как указали этому классу стили,чтобы был прижат header и footer
-    //     return(
-    //         <main className="main">
-    //             <div className="container">
-    //                 <div className="innerForLoader">
-    //                     <div className="loader"></div>
-    //                 </div>
-    //             </div>
-    //         </main>
-    //     )
-    // }
-    
+    // если состояние загрузки isFetching true,то есть идет загрузка запрос на сервер для получения товаров корзины,то показываем лоадер(загрузку),если не отслеживать загрузку при isFetching,то будут только через некоторое время показаны товары корзины,когда запрос на получение всех товаров корзины будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на сервер на получение товаров корзины)
+    if(isFetching){
+        // возвращаем тег main с классом main,так как указали этому классу стили,чтобы был прижат header и footer
+        return(
+            <main className="main">
+                <div className="container">
+                    <div className="innerForLoader">
+                        <div className="loader"></div>
+                    </div>
+                </div>
+            </main>
+        )
+    }
+
 
     return (
         <main className="main">
             <SectionCartTop />
-            <section className={onScreen.sectionCartIntersecting ? "sectionCart sectionCart--active" : "sectionCart"} id="sectionCart" ref={sectionCartRef} >
+            {/* <section className={onScreen.sectionCartIntersecting ? "sectionCart sectionCart--active" : "sectionCart"} id="sectionCart" ref={sectionCartRef} > */}
+            {/* из-за того,что мы отслеживаем загрузку запроса на сервер(isFetching) для получения товаров корзины,то мы не можем тут использовать наш хук useIsOnScreen для intersectionObserver для показа анимации появления элемента корзины */}
+            <section className="sectionCart sectionCart--active">
                 <div className="container">
                     <div className="sectionCart__inner">
                         <h1 className="sectionCart__title">Shopping Cart</h1>
@@ -128,7 +132,8 @@ const Cart = () => {
                                         )}
 
                                         <div className="tableCart__bottomBlock">
-                                            <button className="tableCart__bottomBlock-btn">Update Cart</button>
+                                            {/* изменяем поле updateCartProducts у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте ProductItemCart отслеживаем изменение этого поля updateCartProducts и делаем там запрос на сервер на обновление данных о товаре в корзине */}
+                                            <button className="tableCart__bottomBlock-btn" onClick={()=>setUpdateCartProducts(true)}>Update Cart</button>
                                         </div>
 
                                     </div> 

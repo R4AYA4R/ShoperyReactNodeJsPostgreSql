@@ -1,11 +1,30 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { IProductCart } from "../types/types";
+import { useTypedSelector } from "../hooks/useTypedSelector";
+import { useActions } from "../hooks/useActions";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
+import { API_URL } from "../http/http";
 
 interface IProductItemCart{
     productBasket:IProductCart
 }
 
 const ProductItemCart = ({productBasket}:IProductItemCart) => {
+
+    const {updateCartProducts} = useTypedSelector(state => state.cartSlice); // указываем наш слайс(редьюсер) под названием cartSlice и деструктуризируем у него поле состояния updateCartProducts,используя наш типизированный хук для useSelector
+
+    const {setUpdateCartProducts} = useActions(); // берем actions для изменения состояния слайса(редьюсера) cartSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+
+    const { mutate: mutateCartProduct } = useMutation({
+        mutationKey: ['updateCartProduct'],
+        mutationFn: async (productCart: IProductCart) => {
+            // делаем запрос на сервер для изменения данных товара корзины,указываем тип данных,которые нужно добавить на сервер(в данном случае IProductCart),но здесь не обязательно указывать тип,передаем просто объект productCart как тело запроса
+            await axios.put<IProductCart>(`${API_URL}/updateCartProduct`, productCart);
+        }
+    })
+
 
     const [inputAmountValue, setInputAmountValue] = useState<number>(productBasket.amount);
 
@@ -48,6 +67,17 @@ const ProductItemCart = ({productBasket}:IProductItemCart) => {
 
     },[inputAmountValue])
 
+    // при изменении поля updateCartProducts у состояния слайса(редьюсера) cartSlice делаем запрос на сервер на обновление данных о товаре в корзине
+    useEffect(()=>{
+
+        console.log(updateCartProducts);
+
+        mutateCartProduct({...productBasket,amount:inputAmountValue}); // делаем запрос на обновление данных товара корзины,разворачиваем весь объект productBasket,то есть вместо productBasket будут подставлены все поля из объекта productBasket
+
+        setUpdateCartProducts(false); // изменяем поле updateCartProducts у состояния слайса(редьюсера) cartSlice на false,чтобы указать,что данные товара обновились и потом можно было опять нажимать на кнопку обновления всех товаров корзины
+
+    },[updateCartProducts])
+
     return (
         <div className="tableCart__product-item">
             <div className="tableCart__item-leftBlock">
@@ -64,7 +94,8 @@ const ProductItemCart = ({productBasket}:IProductItemCart) => {
                     <img src="/images/sectionProductsItemTop/plus 1.png" alt="" className="inputBlock__inputBtn-img" />
                 </div>
             </div>
-            <p className="tableCart__item-subtotal">${productBasketPrice}</p>
+            {/* указываем здесь значение productBasketPrice.toFixed(2),используем метод toFixed() (этот метод есть по дефолту в javaScript),этот метод форматирует число до определенного количества символов после запятой(может быть значение от 2 до 20,если значение не указать в toFixed,то по умолчанию будет 0),также этот метод автоматически округляет число к большему где это нужно(типа число 123.67 он округлит до 123.7,если стоит toFixed(1) ),в данном случае указываем это,чтобы цены товаров корзины показывались максимум с 2 цифрами после запятой,если это не указать,то у некоторых цен могут быть числа с кучей цифр после запятой */}
+            <p className="tableCart__item-subtotal">${productBasketPrice.toFixed(2)}</p>
             <button className="tableCart__item-closeBtn">
                 <img src="/images/sectionCart/Close.png" alt="" className="closeBtn__img" />
             </button>

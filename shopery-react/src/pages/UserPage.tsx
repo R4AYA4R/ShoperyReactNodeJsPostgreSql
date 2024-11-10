@@ -54,6 +54,9 @@ const UserPage = ()=>{
 
         }
 
+        console.log(isAuth)
+        console.log(user.userName)
+
     },[])
 
     // функция для выхода из аккаунта
