@@ -29,6 +29,8 @@ router.get('/getAllProductsBasket',userController.getAllProductsBasket); // со
 
 router.put('/updateCartProduct',userController.updateCartProduct); // создаем put запрос на обновление данных товара корзины
 
+router.delete('/deleteCartProduct/:productId',userController.deleteCartProduct); // создаем delete запрос на удаление товара корзины, delete запрос не имеет тела запроса и все query параметры передаются через строку запроса,в данном случае передаем через двоеточие query параметр productId(id товара корзины,который нужно удалить)
+
 
 router.post('/registration',
     body('email').isEmail(),

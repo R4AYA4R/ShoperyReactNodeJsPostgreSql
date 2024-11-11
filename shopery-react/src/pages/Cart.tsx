@@ -67,7 +67,7 @@ const Cart = () => {
     }, [])
 
     // берем из useQuery поле isFetching,оно обозначает,что сейчас идет загрузка запроса на сервер,используем его для того,чтобы показать лоадер(загрузку) при загрузке запроса на сервер
-    const { data: dataProductsCart,isFetching } = useQuery({
+    const { data: dataProductsCart,isFetching,refetch:refetchDataProductsCart } = useQuery({
         queryKey: ['productsCart'],
         queryFn: async () => {
             // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя
@@ -77,7 +77,9 @@ const Cart = () => {
         }
     })
 
+    
     const dataTotalPrice = dataProductsCart?.data.reduce((prev,curr) => prev + curr.totalPrice,0); // проходимся по массиву объектов корзины и на каждой итерации увеличиваем переменную prev(это число,и мы указали,что в начале оно равно 0 и оно будет увеличиваться на каждой итерации массива объектов,запоминая старое состояние числа и увеличивая его на новое значение) на curr(текущий итерируемый объект).totalPrice,это чтобы посчитать общую сумму цены всех товаров
+    
 
     // при изменении dataProductsCart?.data(массива объектов корзины),изменяем состояние totalCheck на dataCheck,чтобы посчитать общую сумму товаров
     useEffect(()=>{
@@ -85,7 +87,6 @@ const Cart = () => {
         setTotalCheckPrice(dataTotalPrice);
         
     },[dataProductsCart?.data])
-
 
 
     // если состояние загрузки isFetching true,то есть идет загрузка запрос на сервер для получения товаров корзины,то показываем лоадер(загрузку),если не отслеживать загрузку при isFetching,то будут только через некоторое время показаны товары корзины,когда запрос на получение всех товаров корзины будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на сервер на получение товаров корзины)
@@ -121,13 +122,14 @@ const Cart = () => {
                                     <p className="tableCart__top-text">Subtotal</p>
                                 </div>
 
-                                {/* если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку) и dataProductsCart?.data true(то есть есть массив товаров корзины),то тогда показываем товары корзины,в другом случае показываем текст */}
-                                {user.userName && dataProductsCart?.data ?
+                                {/* если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку) и dataProductsCart?.data.length true(то есть есть длина массива товаров корзины),то тогда показываем товары корзины,в другом случае показываем текст */}
+                                {user.userName && dataProductsCart?.data.length ?
                                     <div className="tableCart__products">
 
                                         {dataProductsCart.data.map(productBasket =>
 
-                                            <ProductItemCart productBasket={productBasket} key={productBasket.id}/>
+                                            // передаем в компонент ProductItemCart пропс(параметр) refetchDataProductsCart в который передаем функцию refetchDataProductsCart для обновления массива товаров корзины,эту функцию будем вызывать в ProductItemCart когда удалим товар корзины,чтобы переобновить весь массив товаров корзины
+                                            <ProductItemCart productBasket={productBasket} key={productBasket.id} refetchDataProductsCart={refetchDataProductsCart} />
 
                                         )}
 
@@ -147,9 +149,9 @@ const Cart = () => {
                                 <div className="sectionCart__rightBlock-item">
                                     <p className="sectionCart__rightBlock-itemTitle">Subtotal:</p>
 
-                                    {/* если totalCheckPrice true,то есть он есть и он не undefined(totalCheckPrice может быть undefined,если data(объекты товаров корзины) отсутствуют),то показываем общую цену,в другом случае указываем общую цену 0 usd */}
+                                    {/* если totalCheckPrice true,то есть он есть и он не undefined(totalCheckPrice может быть undefined,если data(объекты товаров корзины) отсутствуют),то показываем общую цену и используем метод toFixed(2) (этот метод форматирует число до определенного количества символов после запятой(может быть значение от 2 до 20,если значение не указать в toFixed,то по умолчанию будет 0),также этот метод автоматически округляет число к большему где это нужно(типа число 123.67 он округлит до 123.7,если стоит toFixed(1) ),в данном случае указываем это,чтобы цены товаров корзины показывались максимум с 2 цифрами после запятой,если это не указать,то у некоторых цен могут быть числа с кучей цифр после запятой),в другом случае указываем общую цену 0 usd */}
                                     {totalCheckPrice ? 
-                                        <p className="sectionCart__rightBlock-itemText">${totalCheckPrice}</p>
+                                        <p className="sectionCart__rightBlock-itemText">${totalCheckPrice.toFixed(2)}</p>
                                         : 
                                         <p className="sectionCart__rightBlock-itemText">$0</p>
                                     }
@@ -163,9 +165,9 @@ const Cart = () => {
                                 <div className="sectionCart__rightBlock-item sectionCart__rightBlock-itemBorderTop">
                                     <p className="sectionCart__rightBlock-itemTitle">Total:</p>
                                     
-                                    {/* если totalCheckPrice true,то есть он есть и он не undefined(totalCheckPrice может быть undefined,если data(объекты товаров корзины) отсутствуют),то показываем общую цену,в другом случае указываем общую цену 0 usd */}
+                                    {/* если totalCheckPrice true,то есть он есть и он не undefined(totalCheckPrice может быть undefined,если data(объекты товаров корзины) отсутствуют),то показываем общую цену и используем метод toFixed(2) (этот метод форматирует число до определенного количества символов после запятой(может быть значение от 2 до 20,если значение не указать в toFixed,то по умолчанию будет 0),также этот метод автоматически округляет число к большему где это нужно(типа число 123.67 он округлит до 123.7,если стоит toFixed(1) ),в данном случае указываем это,чтобы цены товаров корзины показывались максимум с 2 цифрами после запятой,если это не указать,то у некоторых цен могут быть числа с кучей цифр после запятой),в другом случае указываем общую цену 0 usd */}
                                     {totalCheckPrice ? 
-                                        <p className="sectionCart__rightBlock-itemText sectionCart__rightBlock-itemTextBold">${totalCheckPrice + 4.99}</p>
+                                        <p className="sectionCart__rightBlock-itemText sectionCart__rightBlock-itemTextBold">${(totalCheckPrice + 4.99).toFixed(2)}</p>
                                         : 
                                         <p className="sectionCart__rightBlock-itemText sectionCart__rightBlock-itemTextBold">$0</p>
                                     }
