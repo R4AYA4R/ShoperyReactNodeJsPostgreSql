@@ -6,7 +6,7 @@ import { useActions } from "../hooks/useActions";
 import { AuthResponse, IProductCart } from "../types/types";
 import { API_URL } from "../http/http";
 import axios from "axios";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import ProductItemCart from "../components/ProductItemCart";
 
 const Cart = () => {
@@ -66,6 +66,19 @@ const Cart = () => {
 
     }, [])
 
+    const {mutate:mutateDeleteCartProduct} = useMutation({
+        mutationKey:['deleteCartProduct'],
+        mutationFn: async (productCart:IProductCart) => {
+            // делаем запрос на сервер для удаление товара корзины, указываем тип данных,которые нужно добавить на сервер(в данном случае IProductCart),но здесь не обязательно указывать тип,передаем просто объект productCart как тело запроса
+            await axios.delete<IProductCart>(`${API_URL}/deleteCartProduct/${productCart.id}`);
+        },
+
+        // при успешной мутации обновляем весь массив товаров корзины с помощью функции refetchDataProductsCart,которую мы передали как пропс (параметр) этого компонента
+        onSuccess(){
+            refetchDataProductsCart();
+        }
+    })
+
     // берем из useQuery поле isFetching,оно обозначает,что сейчас идет загрузка запроса на сервер,используем его для того,чтобы показать лоадер(загрузку) при загрузке запроса на сервер
     const { data: dataProductsCart,isFetching,refetch:refetchDataProductsCart } = useQuery({
         queryKey: ['productsCart'],
@@ -88,6 +101,14 @@ const Cart = () => {
         
     },[dataProductsCart?.data])
 
+
+    // функция для удаления всех товаров корзины
+    const deleteAllProductsCart = ()=>{
+        // проходимся по каждому элементу массива товаров корзины и вызываем мутацию mutateDeleteCartProduct и передаем туда productCart(сам productCart, каждый товар на каждой итерации,и потом в функции запроса на сервер mutateDeleteCartProduct будем брать у этого productCart только id для удаления из корзины)
+        dataProductsCart?.data.forEach((productCart)=>{
+            mutateDeleteCartProduct(productCart);
+        })
+    }
 
     // если состояние загрузки isFetching true,то есть идет загрузка запрос на сервер для получения товаров корзины,то показываем лоадер(загрузку),если не отслеживать загрузку при isFetching,то будут только через некоторое время показаны товары корзины,когда запрос на получение всех товаров корзины будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на сервер на получение товаров корзины)
     if(isFetching){
@@ -134,6 +155,8 @@ const Cart = () => {
                                         )}
 
                                         <div className="tableCart__bottomBlock">
+                                            <button className="tableCart__bottomBlock-deleteBtn" onClick={deleteAllProductsCart}>Clear Cart</button>
+
                                             {/* изменяем поле updateCartProducts у состояния слайса(редьюсера) cartSlice на true,чтобы обновились все данные о товарах в корзине по кнопке,потом в компоненте ProductItemCart отслеживаем изменение этого поля updateCartProducts и делаем там запрос на сервер на обновление данных о товаре в корзине */}
                                             <button className="tableCart__bottomBlock-btn" onClick={()=>setUpdateCartProducts(true)}>Update Cart</button>
                                         </div>

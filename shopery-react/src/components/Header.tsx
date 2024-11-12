@@ -45,8 +45,8 @@ const Header = () => {
                             <NavLink to="/cart" className="menuList__item-link menuList__item-linkCart">
                                 <img src="/images/header/Rectangle.png" alt="" className="menuList__item-cartImg" />
 
-                                {/* если dataProductsCart?.data.length true(то есть длина массива товаров корзины есть),то показываем длину массива товаров корзины,в другом случае показываем 0 */}
-                                <span className="menuList__item-spanCart">{dataProductsCart?.data.length ? dataProductsCart.data.length : 0}</span>
+                                {/* если user.userName true(то есть в user.userName есть какое-то значение,то есть пользователь авторизован,делаем эту проверку,чтобы данные количества товаров корзины правильно отображались сразу при выходе из аккаунта,если не сделать эту проверку,то после выхода из аккаунта данные количества товаров корзины будут правильно отображаться только после перезагрузки страницы) и dataProductsCart?.data.length true(то есть длина массива товаров корзины есть),то показываем длину массива товаров корзины,в другом случае показываем 0 */}
+                                <span className="menuList__item-spanCart">{user.userName && dataProductsCart?.data.length ? dataProductsCart.data.length : 0}</span>
                             </NavLink>
 
                             <NavLink to="/user" className="menuList__item-link">

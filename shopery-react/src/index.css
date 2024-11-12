@@ -1571,7 +1571,7 @@ a {
 .tableCart__bottomBlock {
   padding: 16px 20px;
   display: flex;
-  justify-content: end;
+  justify-content: space-between;
   border-top: 1px solid #E6E6E6;
 }
 
@@ -1596,6 +1596,24 @@ a {
   border-radius: 10px;
   border: 1px solid #E6E6E6;
   padding: 24px;
+}
+
+.tableCart__bottomBlock-deleteBtn{
+  padding: 14px 32px;
+  color:#fff;
+  background-color: #1A1A1A;
+  border-radius: 43px;
+  border: none;
+  font-family: 'Poppins',sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .5s ease;
+}
+
+.tableCart__bottomBlock-deleteBtn:hover{
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #1A1A1A;
 }
 
 .sectionCart__rightBlock-title {
@@ -1927,4 +1945,61 @@ a {
   font-weight: 600;
   color: #1A1A1A;
   padding: 16px 20px;
+}
+
+.sectionUserPage__settings{
+  margin-bottom: 80px;
+}
+
+.settings__accountSettings{
+  border: 1px solid #E6E6E6;
+  border-radius: 8px;
+}
+
+.settings__accountSettings-title{
+  color:#1A1A1A;
+  font-weight: 500;
+  font-size: 20px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #E6E6E6;
+}
+
+.settings__accountSettingsMain{
+  padding: 24px;
+}
+
+.accountSettingsMain__item-text{
+  color: #1A1A1A;
+  font-size: 14px;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
+.settings__accountSettingsMain-item {
+  margin-bottom: 16px;
+}
+
+.accountSettingsMain__item-input{
+  padding: 14px 16px;
+  border: 1px solid #E6E6E6;
+  border-radius: 6px;
+  outline: none;
+}
+
+.settings__accountSettingsMain__btn{
+  background-color: #00B207;
+  color: #fff;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 43px;
+  cursor: pointer;
+  font-family: 'Poppins',sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+  transition:all .5s ease;
+}
+
+.settings__accountSettingsMain__btn:hover{
+  background-color: #1c8f1f;
 }

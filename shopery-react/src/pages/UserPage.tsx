@@ -146,9 +146,25 @@ const UserPage = ()=>{
                             }
 
                             {tab === 'settings' && 
-                                <>
-                                    <p>settings</p>
-                                </>
+                                <div className="sectionUserPage__settings">
+                                    <div className="settings__accountSettings">
+                                        <h2 className="settings__accountSettings-title">Account Settings</h2>
+                                        <div className="settings__accountSettingsMain">
+                                            <div className="settings__accountSettingsMain-item">
+                                                <p className="accountSettingsMain__item-text">Name</p>
+                                                <input type="text" className="accountSettingsMain__item-input" placeholder={`${user.userName}`}/>
+                                            </div>
+                                            <div className="settings__accountSettingsMain-item">
+                                                <p className="accountSettingsMain__item-text">Email</p>
+                                                <input type="text" className="accountSettingsMain__item-input" placeholder={`${user.email}`}/>
+                                            </div>
+
+                                            {/* <p className="formErrorText">Error</p> */}
+
+                                            <button className="settings__accountSettingsMain__btn">Save Changes</button>
+                                        </div>
+                                    </div>
+                                </div>
                             }
 
                         </div>
