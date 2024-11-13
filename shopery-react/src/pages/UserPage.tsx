@@ -5,38 +5,45 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse } from "../types/types";
 import { API_URL } from "../http/http";
-import { useEffect, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 
-const UserPage = ()=>{
+const UserPage = () => {
 
-    const [tab,setTab] = useState('dashboard');
+    const [inputNameAccSettings, setInputNameAccSettings] = useState('');
 
-    const {isAuth,user,isLoading} = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
+    const [inputEmailAccSettings, setInputEmailAccSettings] = useState('');
 
-    const {checkAuthUser,setLoadingUser,logoutUser} = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const [errorAccSettings, setErrorAccSettings] = useState('');
+
+
+    const [tab, setTab] = useState('dashboard');
+
+    const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
+
+    const { checkAuthUser, setLoadingUser, logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
-    const checkAuth =async ()=>{
+    const checkAuth = async () => {
 
         setLoadingUser(true); // изменяем поле isLoading состояния пользователя в userSlice на true(то есть пошла загрузка)
 
         // оборачиваем в try catch,чтобы отлавливать ошибки
-        try{
+        try {
 
             // здесь используем уже обычный axios,указываем тип в generic,что в ответе от сервера ожидаем наш тип данных AuthResponse,указываем наш url до нашего роутера(/api) на бэкэнде(API_URL мы импортировали из другого нашего файла) и через / указываем refresh(это тот url,где мы выдаем access и refresh токены на бэкэнде),и вторым параметром указываем объект опций,указываем поле withCredentials true(чтобы автоматически с запросом отправлялись cookies)
-            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`,{withCredentials:true});
+            const response = await axios.get<AuthResponse>(`${API_URL}/refresh`, { withCredentials: true });
 
             console.log(response);
 
             checkAuthUser(response.data); // вызываем нашу функцию(action) для изменения состояния пользователя и передаем туда response.data(в данном случае это объект с полями accessToken,refreshToken и user,которые пришли от сервера)
 
-        } catch(e:any) {
+        } catch (e: any) {
 
             console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера  из поля message из поля data у response у e
 
-        } finally{
+        } finally {
             // в блоке finally будет выполнен код в независимости от try catch(то есть в любом случае,даже если будет ошибка)
             setLoadingUser(false); // изменяем поле isLoading состояния пользователя в userSlice на false(то есть загрузка закончена)
         }
@@ -45,10 +52,10 @@ const UserPage = ()=>{
 
 
     // при запуске сайта будет отработан код в этом useEffect
-    useEffect(()=>{
+    useEffect(() => {
 
         // если localStorage.getItem('token') true,то есть по ключу token в localStorage что-то есть
-        if(localStorage.getItem('token')) {
+        if (localStorage.getItem('token')) {
 
             checkAuth(); // вызываем нашу функцию checkAuth(),которую описали выше для проверки авторизован ли пользователь
 
@@ -57,13 +64,13 @@ const UserPage = ()=>{
         console.log(isAuth)
         console.log(user.userName)
 
-    },[])
+    }, [])
 
     // функция для выхода из аккаунта
-    const logout= async () => {
+    const logout = async () => {
 
         // оборачиваем в try catch,чтобы отлавливать ошибки 
-        try{
+        try {
 
             const response = await AuthService.logout(); // вызываем нашу функцию logout() у AuthService
 
@@ -71,7 +78,7 @@ const UserPage = ()=>{
 
             setTab('dashboard'); // изменяем состояние таба на dashboard то есть показываем секцию dashboard(в данном случае главный отдел пользователя),чтобы при выходе из аккаунта и входе обратно у пользователя был открыт главный отдел аккаунта,а не настройки или последний отдел,который пользователь открыл до выхода из аккаунта
 
-        }catch(e:any){
+        } catch (e: any) {
 
             console.log(e.response?.data?.message); // если была ошибка,то выводим ее в логи,берем ее из ответа от сервера  из поля message из поля data у response у e 
 
@@ -80,10 +87,34 @@ const UserPage = ()=>{
     }
 
 
+    // функция для формы изменения имени и почты пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitFormSettings = (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault();  // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        if (inputNameAccSettings.length < 3 || inputNameAccSettings.length > 20) {
+
+            setErrorAccSettings('Name must be 3 - 20 characters');
+
+        } else if (!inputEmailAccSettings.includes('@') || !inputEmailAccSettings.includes('.') || inputEmailAccSettings.length < 5) {
+            // если инпут почты includes('@') false(то есть инпут почты не включает в себя символ @ собаки или не включает в себя точку) или значение инпута почты по количеству символов меньше 5,то показываем ошибку
+            setErrorAccSettings('Enter email correctly');
+        }else{
+
+            setErrorAccSettings(''); // изменяем состояние ошибки на пустую строку,то есть убираем ошибку
+
+            console.log(inputEmailAccSettings, inputNameAccSettings)
+
+
+        }
+
+    }
+
+
     // если состояние загрузки true,то есть идет загрузка,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
-    if(isLoading){
+    if (isLoading) {
         // возвращаем тег main с классом main,так как указали этому классу стили,чтобы был прижат header и footer
-        return(
+        return (
             <main className="main">
                 <div className="container">
                     <div className="innerForLoader">
@@ -96,21 +127,21 @@ const UserPage = ()=>{
 
 
     // если isAuth false,то есть пользователь не авторизован(когда возвращается ошибка от сервера от эндпоинта /refresh в функции checkAuth,то isAuth становится типа false,и тогда пользователя типа выкидывает из аккаунта,то есть в данном случае возвращаем компонент формы регистрации и авторизации),то возвращаем компонент формы,вместо страницы пользователя,когда пользотватель логинится и вводит правильно данные,то эта проверка на isAuth тоже работает правильно и если данные при логине были введены верно,то сразу показывается страница пользователя(даже без использования отдельного useEffect)
-    if(!isAuth){
-        return(
+    if (!isAuth) {
+        return (
             <main className="main">
                 {/* передаем в пропсах параметр nameUserTop с определенным значением,чтобы отображать разный текст в одном компоненте SectionUserTop */}
-                <SectionUserTop nameUserTop="Sign In"/>
+                <SectionUserTop nameUserTop="Sign In" />
 
-                <UserFormComponent/>
+                <UserFormComponent />
             </main>
         )
     }
 
-    return(
+    return (
         <main className="main">
             {/* передаем в пропсах параметр nameUserTop с определенным значением,чтобы отображать разный текст в одном компоненте SectionUserTop */}
-            <SectionUserTop nameUserTop="User Account"/>
+            <SectionUserTop nameUserTop="User Account" />
 
             <section className="sectionUserPage" >
                 <div className="container">
@@ -118,13 +149,13 @@ const UserPage = ()=>{
                         <div className="sectionUserPage__leftBar">
                             <h2 className="sectionUserPage__leftBar-title">Navigation</h2>
                             <ul className="leftBar__list">
-                                <li className={tab === 'dashboard' ? "leftBar__list-item leftBar__list-item--active" : "leftBar__list-item"} onClick={()=>setTab('dashboard')}>
+                                <li className={tab === 'dashboard' ? "leftBar__list-item leftBar__list-item--active" : "leftBar__list-item"} onClick={() => setTab('dashboard')}>
                                     <img src="/images/sectionUserPage/dashboard 2.png" alt="" className="leftBar__list-img" />
-                                    <p className={tab === 'dashboard' ? "leftBar__list-text leftBar__list-text--active": "leftBar__list-text"}>Dashboard</p>
+                                    <p className={tab === 'dashboard' ? "leftBar__list-text leftBar__list-text--active" : "leftBar__list-text"}>Dashboard</p>
                                 </li>
-                                <li className={tab === 'settings' ? "leftBar__list-item leftBar__list-item--active" : "leftBar__list-item"} onClick={()=>setTab('settings')}>
+                                <li className={tab === 'settings' ? "leftBar__list-item leftBar__list-item--active" : "leftBar__list-item"} onClick={() => setTab('settings')}>
                                     <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__list-img" />
-                                    <p className={tab === 'settings' ? "leftBar__list-text leftBar__list-text--active": "leftBar__list-text"}>Settings</p>
+                                    <p className={tab === 'settings' ? "leftBar__list-text leftBar__list-text--active" : "leftBar__list-text"}>Settings</p>
                                 </li>
                                 <li className="leftBar__list-item leftBar__list-itemLogout" onClick={logout}>
                                     <img src="/images/sectionUserPage/dashboard 2 (2).png" alt="" className="leftBar__list-img" />
@@ -133,37 +164,39 @@ const UserPage = ()=>{
                             </ul>
                         </div>
                         <div className="sectionUserPage__mainBlock">
-                           
-                            {tab === 'dashboard' && 
+
+                            {tab === 'dashboard' &&
                                 <div className="sectionUserPage__dashboard">
                                     <div className="sectionUserPage__dashboard-userInfo">
                                         <img src="/images/sectionUserPage/Ellipse 5.png" alt="" className="dashboard__userInfo-img" />
                                         <h3 className="dashboard__userInfo-name">{user.userName}</h3>
                                         <p className="dashboard__userInfo-email">{user.email}</p>
-                                        <button className="dashboard__userInfo-btn" onClick={()=>setTab('settings')}>Edit Profile</button>
+                                        <button className="dashboard__userInfo-btn" onClick={() => setTab('settings')}>Edit Profile</button>
                                     </div>
                                 </div>
                             }
 
-                            {tab === 'settings' && 
+                            {tab === 'settings' &&
                                 <div className="sectionUserPage__settings">
-                                    <div className="settings__accountSettings">
+                                    <form onSubmit={onSubmitFormSettings} className="settings__accountSettings">
                                         <h2 className="settings__accountSettings-title">Account Settings</h2>
                                         <div className="settings__accountSettingsMain">
                                             <div className="settings__accountSettingsMain-item">
                                                 <p className="accountSettingsMain__item-text">Name</p>
-                                                <input type="text" className="accountSettingsMain__item-input" placeholder={`${user.userName}`}/>
+                                                <input type="text" className="accountSettingsMain__item-input" placeholder={`${user.userName}`} value={inputNameAccSettings} onChange={(e) => setInputNameAccSettings(e.target.value)} />
                                             </div>
                                             <div className="settings__accountSettingsMain-item">
                                                 <p className="accountSettingsMain__item-text">Email</p>
-                                                <input type="text" className="accountSettingsMain__item-input" placeholder={`${user.email}`}/>
+                                                <input type="text" className="accountSettingsMain__item-input" placeholder={`${user.email}`} value={inputEmailAccSettings} onChange={(e) => setInputEmailAccSettings(e.target.value)} />
                                             </div>
 
-                                            {/* <p className="formErrorText">Error</p> */}
+                                            {/* если errorAccSettings true(то есть в состоянии errorAccSettings что-то есть),то показываем текст ошибки */}
+                                            {errorAccSettings && <p className="formErrorText">{errorAccSettings}</p>}
 
-                                            <button className="settings__accountSettingsMain__btn">Save Changes</button>
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button type="submit" className="settings__accountSettingsMain__btn">Save Changes</button>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div>
                             }
 
