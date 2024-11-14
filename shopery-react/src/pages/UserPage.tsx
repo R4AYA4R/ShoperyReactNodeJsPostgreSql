@@ -3,11 +3,12 @@ import SectionUserTop from "../components/SectionUserTop";
 import UserFormComponent from "../components/UserFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { AuthResponse } from "../types/types";
-import { API_URL } from "../http/http";
+import { AuthResponse, IUpdateAccInfoObj, IUser } from "../types/types";
+import $api, { API_URL } from "../http/http";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 const UserPage = () => {
 
@@ -22,7 +23,17 @@ const UserPage = () => {
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
-    const { checkAuthUser, setLoadingUser, logoutUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+    const { checkAuthUser, setLoadingUser, logoutUser, setUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
+
+
+
+    // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь
+    const changeAccInfoInDb = async (userId: number, name: string, email: string) => {
+
+        return $api.put('/changeAccInfo', { userId, name, email }); // возвращаем put запрос на сервер на эндпоинт /changeAccInfo для изменения данных пользователя и передаем вторым параметром объект с полями,используем здесь наш axios с определенными настройками,которые мы задали ему в файле http,чтобы правильно работали запросы на authMiddleware на проверку на access токен на бэкэнде,чтобы когда будет ошибка от бэкэнда от authMiddleware,то будет сразу идти повторный запрос на /refresh на бэкэнде для переобновления access токена и refresh токена и опять будет идти запрос на изменение данных пользователя в базе данных(на /changeAccInfo в данном случае) но уже с переобновленным access токеном,который теперь действителен(это чтобы предотвратить доступ к аккаунту мошенникам,если они украли аккаунт,то есть если access токен будет не действителен уже,то будет запрос на /refresh для переобновления refresh и access токенов, и тогда у мошенников уже будут не действительные токены и они не смогут пользоваться аккаунтом)
+
+    }
+
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
     const checkAuth = async () => {
@@ -88,27 +99,89 @@ const UserPage = () => {
 
 
     // функция для формы изменения имени и почты пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
-    const onSubmitFormSettings = (e: FormEvent<HTMLFormElement>) => {
+    const onSubmitFormSettings = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault();  // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
-        if (inputNameAccSettings.length < 3 || inputNameAccSettings.length > 20) {
+        // если inputEmailAccSettings true(то есть в inputEmailAccSettings есть какое-то значение) или inputNameAccSettings true(то есть в inputNameAccSettings есть какое-то значение), то делаем запрос на сервер для изменения данные пользователя,если же в поля инпутов имени или почты пользователь ничего не ввел,то не будет отправлен запрос 
+        if(inputEmailAccSettings || inputNameAccSettings){
 
-            setErrorAccSettings('Name must be 3 - 20 characters');
+            try {
 
-        } else if (!inputEmailAccSettings.includes('@') || !inputEmailAccSettings.includes('.') || inputEmailAccSettings.length < 5) {
-            // если инпут почты includes('@') false(то есть инпут почты не включает в себя символ @ собаки или не включает в себя точку) или значение инпута почты по количеству символов меньше 5,то показываем ошибку
-            setErrorAccSettings('Enter email correctly');
-        }else{
+                let name = inputNameAccSettings.trim(); // помещаем в переменную значение инпута имени и убираем у него пробелы с помощю trim() (указываем ей именно let,чтобы можно было изменять)
 
-            setErrorAccSettings(''); // изменяем состояние ошибки на пустую строку,то есть убираем ошибку
-
-            console.log(inputEmailAccSettings, inputNameAccSettings)
+                // если name true(то есть в name есть какое-то значение),то изменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,делаем эту проверку,иначе ошибка,так как пользователь может не ввести значение в инпут имени и тогда будет ошибка при изменении первой буквы инпута имени
+                if(name){
+                    name = name.replace(name[0], name[0].toUpperCase()); // заменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,чтобы имя начиналось с большой буквы,даже если написали с маленькой
+                }
 
 
-        }
+                const response = await changeAccInfoInDb(user.id, name, inputEmailAccSettings); // вызываем нашу функцию запроса на сервер для изменения данных пользователя,передаем туда user.id(id пользователя) и инпуты имени и почты
+
+                console.log(response.data);
+
+                setUser(response.data); // изменяем сразу объект пользователя на данные,которые пришли от сервера,чтобы не надо было обновлять страницу для обновления данных
+
+
+                setErrorAccSettings(''); // изменяем состояние ошибки на пустую строку,то есть убираем ошибку
+
+                setInputEmailAccSettings(''); // изменяем состояние почты на пустую строку,чтобы убирался текст в инпуте после успешного запроса
+
+                setInputNameAccSettings('');
+
+            } catch (e: any) {
+
+                console.log(e.response?.data?.message); // выводим ошибку в логи
+
+                return setErrorAccSettings(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+            }
+
+
+        }   
+
+        // закомментировали этот вариант,так как сделали по-другому проверки для изменения данных пользователя в форме,в данном случае делаем основные проверки на бэкэнде(в node js),а не тут
+        // if (inputNameAccSettings.length < 3 || inputNameAccSettings.length > 20) {
+
+        //     setErrorAccSettings('Name must be 3 - 20 characters');
+
+        // } else if (!inputEmailAccSettings.includes('@') || !inputEmailAccSettings.includes('.') || inputEmailAccSettings.length < 5) {
+        //     // если инпут почты includes('@') false(то есть инпут почты не включает в себя символ @ собаки или не включает в себя точку) или значение инпута почты по количеству символов меньше 5,то показываем ошибку
+        //     setErrorAccSettings('Enter email correctly');
+        // } else {
+
+        //     console.log(inputEmailAccSettings, inputNameAccSettings)
+
+        //     try {
+
+        //         let name = inputNameAccSettings.trim(); // помещаем в переменную значение инпута имени и убираем у него пробелы с помощю trim() (указываем ей именно let,чтобы можно было изменять)
+
+        //         name = name.replace(name[0], name[0].toUpperCase()); // заменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,чтобы имя начиналось с большой буквы,даже если написали с маленькой
+
+
+        //         const response = await changeAccInfoInDb(user.id, name, inputEmailAccSettings); // вызываем нашу функцию запроса на сервер для изменения данных пользователя,передаем туда user.id(id пользователя) и инпуты имени и почты
+
+        //         console.log(response.data);
+
+        //         setUser(response.data); // изменяем сразу объект пользователя на данные,которые пришли от сервера,чтобы не надо было обновлять страницу для обновления данных
+
+
+        //         setErrorAccSettings(''); // изменяем состояние ошибки на пустую строку,то есть убираем ошибку
+
+        //         setInputEmailAccSettings(''); // изменяем состояние почты на пустую строку,чтобы убирался текст в инпуте после успешного запроса
+
+        //         setInputNameAccSettings('');
+
+        //     } catch (e: any) {
+        //         console.log(e.response?.data?.message); // выводим ошибку в логи
+
+        //         return setErrorAccSettings(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+        //     }
+
+        // }
 
     }
+
+
 
 
     // если состояние загрузки true,то есть идет загрузка,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)

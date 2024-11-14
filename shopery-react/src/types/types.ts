@@ -73,3 +73,11 @@ export interface IProductCart extends IProduct{
 
     userId:number // указываем это поле,чтобы указать значение id объекта пользователя,чтобы потом показывать в корзине товары только для определенного авторизованно пользователя
 }
+
+
+// создаем и экспортируем тип для объекта параметра в useQuery для обновления данных пользователя 
+export interface IUpdateAccInfoObj{
+    userId:number,
+    name:string,
+    email:string
+}

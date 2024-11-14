@@ -65,6 +65,10 @@ export const userSlice = createSlice({
 
             state.user = {} as IUser; // изменяем поле user этого класса на пустой объект и указываем,что он нашего типа IUser,так как уже вышли из аккаунта
 
+        },
+
+        setUser:(state,action:PayloadAction<IUser>) => {
+            state.user = action.payload; // изменяем объект пользователя на action.payload(данные пользователя,которые пришли от сервера)
         }
 
     }
