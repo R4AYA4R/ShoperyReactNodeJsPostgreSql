@@ -19,6 +19,21 @@ const UserPage = () => {
     const [errorAccSettings, setErrorAccSettings] = useState('');
 
 
+    const [passwordActiveCurrent, setPasswordActiveCurrent] = useState(true);
+
+    const [passwordActiveNew, setPasswordActiveNew] = useState(false);
+
+    const [passwordActiveConfirm, setPasswordActiveConfirm] = useState(false);
+
+    const [inputPassCurrent,setInputPassCurrent] = useState('');
+
+    const [inputPassNew,setInputPassNew] = useState('');
+
+    const [inputPassConfirm,setInputPassConfirm] = useState('');
+
+    const [errorPasswordSettings,setErrorPasswordSettings] = useState('');
+
+
     const [tab, setTab] = useState('dashboard');
 
     const { isAuth, user, isLoading } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
@@ -104,14 +119,14 @@ const UserPage = () => {
         e.preventDefault();  // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если inputEmailAccSettings true(то есть в inputEmailAccSettings есть какое-то значение) или inputNameAccSettings true(то есть в inputNameAccSettings есть какое-то значение), то делаем запрос на сервер для изменения данные пользователя,если же в поля инпутов имени или почты пользователь ничего не ввел,то не будет отправлен запрос 
-        if(inputEmailAccSettings || inputNameAccSettings){
+        if (inputEmailAccSettings || inputNameAccSettings) {
 
             try {
 
                 let name = inputNameAccSettings.trim(); // помещаем в переменную значение инпута имени и убираем у него пробелы с помощю trim() (указываем ей именно let,чтобы можно было изменять)
 
                 // если name true(то есть в name есть какое-то значение),то изменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,делаем эту проверку,иначе ошибка,так как пользователь может не ввести значение в инпут имени и тогда будет ошибка при изменении первой буквы инпута имени
-                if(name){
+                if (name) {
                     name = name.replace(name[0], name[0].toUpperCase()); // заменяем первую букву этой строки инпута имени на первую букву этой строки инпута имени только в верхнем регистре,чтобы имя начиналось с большой буквы,даже если написали с маленькой
                 }
 
@@ -137,7 +152,7 @@ const UserPage = () => {
             }
 
 
-        }   
+        }
 
         // закомментировали этот вариант,так как сделали по-другому проверки для изменения данных пользователя в форме,в данном случае делаем основные проверки на бэкэнде(в node js),а не тут
         // if (inputNameAccSettings.length < 3 || inputNameAccSettings.length > 20) {
@@ -178,6 +193,38 @@ const UserPage = () => {
         //     }
 
         // }
+
+    }
+
+
+    // функция для формы изменения пароля пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
+    const onSubmitPassSettingsForm = async (e:FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        // если инпут текущего пароля равен пустой строке,то показываем ошибку
+        if(inputPassCurrent === ''){
+            setErrorPasswordSettings('Enter current password');
+        }else if(inputPassNew.length < 3 || inputPassNew.length > 32){
+            // если инпут нового пароля меньше 3 или больше 32,то показываем ошибку
+            setErrorPasswordSettings('New password must be 3 - 32 characters');
+        }else if(inputPassNew !== inputPassConfirm){
+            // если значение инпута нового пароля не равно значению инпута подтвержденного пароля,то показываем ошибку
+            setErrorPasswordSettings('Passwords don`t match');
+        }else{
+
+            try{
+
+                // здесь вызываем функцию запроса на сервер для изменения пароля пользователя
+
+
+                setErrorPasswordSettings('');
+
+            }catch(e){
+
+            }
+
+        }
 
     }
 
@@ -270,6 +317,42 @@ const UserPage = () => {
                                             <button type="submit" className="settings__accountSettingsMain__btn">Save Changes</button>
                                         </div>
                                     </form>
+
+                                    <form onSubmit={onSubmitPassSettingsForm} className="settings__accountSettings settings__passwordSettings">
+                                        <h2 className="settings__accountSettings-title">Change Password</h2>
+                                        <div className="settings__accountSettingsMain">
+                                            <div className="settings__accountSettingsMain-item settings__passwordSettings-item">
+                                                <p className="accountSettingsMain__item-text">Current Password</p>
+
+                                                {/* если passwordActiveCurrent true(то есть состояние для кнопки скрытия пароля инпута true), то указываем тип инпуту как password(чтобы были точки вместо символов), в другом случае тип как text */}
+                                                <input type={passwordActiveCurrent ? "password" : "text"} className="accountSettingsMain__item-input passwordSettings__item-input" placeholder="Current Password" value={inputPassCurrent} onChange={(e) => setInputPassCurrent(e.target.value)} />
+                                                <img src="/images/sectionUserForm/eye-open 1.png" alt="" className="login__passwordBlock-img passwordSettings__item-img" onClick={() => setPasswordActiveCurrent((prev) => !prev)} />
+                                            </div>
+
+                                            <div className="settings__passwordSettingsMain-passwordsBlock">
+
+                                                <div className="settings__accountSettingsMain-item settings__passwordSettings-item">
+                                                    <p className="accountSettingsMain__item-text">New Password</p>
+                                                    <input type={passwordActiveNew ? "password" : "text"} className="accountSettingsMain__item-input passwordSettings__item-input" placeholder="New Password" value={inputPassNew} onChange={(e) => setInputPassNew(e.target.value)} />
+                                                    <img src="/images/sectionUserForm/eye-open 1.png" alt="" className="login__passwordBlock-img passwordSettings__item-img" onClick={() => setPasswordActiveNew((prev) => !prev)} />
+                                                </div>
+                                                <div className="settings__accountSettingsMain-item settings__passwordSettings-item">
+                                                    <p className="accountSettingsMain__item-text">Confirm Password</p>
+                                                    <input type={passwordActiveConfirm ? "password" : "text"}  className="accountSettingsMain__item-input passwordSettings__item-input" placeholder="Confirm Password" value={inputPassConfirm} onChange={(e) => setInputPassConfirm(e.target.value)} />
+                                                    <img src="/images/sectionUserForm/eye-open 1.png" alt="" className="login__passwordBlock-img passwordSettings__item-img" onClick={() => setPasswordActiveConfirm((prev) => !prev)} />
+                                                </div>
+
+                                            </div>
+
+
+                                            {/* если errorPasswordSettings true(то есть в состоянии errorPasswordSettings что-то есть),то показываем текст ошибки */}
+                                            {errorPasswordSettings && <p className="formErrorText">{errorPasswordSettings}</p>}
+
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button type="submit" className="settings__accountSettingsMain__btn">Change Password</button>
+                                        </div>
+                                    </form>
+
                                 </div>
                             }
 

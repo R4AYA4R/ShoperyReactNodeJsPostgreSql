@@ -2003,3 +2003,36 @@ a {
 .settings__accountSettingsMain__btn:hover{
   background-color: #1c8f1f;
 }
+
+.settings__passwordSettings{
+  margin-top: 26px;
+}
+
+.settings__passwordSettings-item{
+  position: relative;
+}
+
+.passwordSettings__item-input{
+  width: 100%;
+  padding-right: 50px;
+}
+
+.settings__passwordSettingsMain-passwordsBlock{
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  align-items: center;
+  gap:16px;
+}
+
+.passwordSettings__item-img{
+  top: 38px;
+}
+
+
+/* стилизуем placeholder для инпутов */
+.accountSettingsMain__item-input::placeholder{
+  color: #808080;
+  font-size: 14px;
+  font-weight: 400;
+  font-family: 'Poppins',sans-serif;
+}
