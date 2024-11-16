@@ -49,6 +49,13 @@ const UserPage = () => {
 
     }
 
+    // фукнция для запроса на сервер на изменение пароля пользователя в базе данных
+    const changePassInDb = async (userId:number,currentPass:string,newPass:string) => {
+
+        return $api.put('/changeAccPass',{userId,currentPass,newPass}); // возвращаем put запрос на сервер на эндпоинт /changeAccPass для изменения пароля пользователя и передаем вторым параметром объект с полями
+
+    }
+
 
     // функция для проверки авторизован ли пользователь(валиден ли его refresh токен)
     const checkAuth = async () => {
@@ -215,14 +222,24 @@ const UserPage = () => {
 
             try{
 
-                // здесь вызываем функцию запроса на сервер для изменения пароля пользователя
+                const response = await changePassInDb(user.id,inputPassCurrent,inputPassNew); // вызываем нашу функцию запроса на сервер для изменения пароля пользователя,передаем туда user.id(id пользователя) и значения инпутов текущего пароля и нового пароля
+
+                console.log(response.data);
 
 
-                setErrorPasswordSettings('');
+            }catch(e: any) {
 
-            }catch(e){
+                console.log(e.response?.data?.message); // выводим ошибку в логи
 
+                return setErrorPasswordSettings(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
             }
+
+            setErrorPasswordSettings(''); // изменяем состояние ошибки в форме для изменения пароля пользователя на пустую строку,то есть убираем ошибку 
+
+            // изменяем состояния инпутов на пустые строки
+            setInputPassCurrent('');
+            setInputPassNew('');
+            setInputPassConfirm('');
 
         }
 

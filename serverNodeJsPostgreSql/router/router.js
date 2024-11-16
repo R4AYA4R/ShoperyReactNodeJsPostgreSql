@@ -35,6 +35,8 @@ router.delete('/deleteCartProduct/:productId',userController.deleteCartProduct);
 
 router.put('/changeAccInfo',authMIddleware,body('email').isEmail(),userController.changeAccInfo);  // указываем put запрос для изменения данных пользователя в базе данных,вторым параметром указываем authMiddleware для проверки на access токен у пользователя,если он есть и он еще годен по сроку жизни этого токена(мы этот срок указали при создании токена),то будет выполнена функция changeAccInfo,если нет,то не будет и будет ошибка,третьим параметром указываем middleware(функцию body для валидации),указываем в параметре body() названия поля из тела запроса,которое хотим провалидировать(в данном случае это email),и указываем валидатор isEmail() для проверки на email
 
+router.put('/changeAccPass',authMIddleware,userController.changeAccPass); // создаем put запрос для изменения пароля пользователя в базе данных,вторым параметром указываем наш authMIddleware для проверки на access токен у пользователя,если он есть и он еще годен по сроку жизни этого токена(мы этот срок указали при создании токена),то будет выполнена функция changeAccPass,если нет,то не будет и будет ошибка 
+
 
 router.post('/registration',
     body('email').isEmail(),
