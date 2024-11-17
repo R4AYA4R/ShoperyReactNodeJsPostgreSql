@@ -5,7 +5,7 @@ import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { AuthResponse, IUpdateAccInfoObj, IUser } from "../types/types";
 import $api, { API_URL } from "../http/http";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
 import { useIsOnScreen } from "../hooks/useIsOnScreen";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -25,13 +25,30 @@ const UserPage = () => {
 
     const [passwordActiveConfirm, setPasswordActiveConfirm] = useState(false);
 
-    const [inputPassCurrent,setInputPassCurrent] = useState('');
+    const [inputPassCurrent, setInputPassCurrent] = useState('');
 
-    const [inputPassNew,setInputPassNew] = useState('');
+    const [inputPassNew, setInputPassNew] = useState('');
 
-    const [inputPassConfirm,setInputPassConfirm] = useState('');
+    const [inputPassConfirm, setInputPassConfirm] = useState('');
 
-    const [errorPasswordSettings,setErrorPasswordSettings] = useState('');
+    const [errorPasswordSettings, setErrorPasswordSettings] = useState('');
+
+
+    const [inputNameProduct,setInputNameProduct] = useState('');
+
+    const [selectCategoryValue, setSelectCategoryValue] = useState('');
+
+    const [selectCategoryActive, setSelectCategoryActive] = useState(false);
+
+
+    const [selectTasteActive, setSelectTasteActive] = useState(false);
+
+    const [selectTasteValue, setSelectTasteValue] = useState('');
+
+
+    const [inputPriceValue,setInputPriceValue] = useState(0);
+
+    const [errNewProductForm,setErrNewProductForm] = useState('');
 
 
     const [tab, setTab] = useState('dashboard');
@@ -50,9 +67,9 @@ const UserPage = () => {
     }
 
     // фукнция для запроса на сервер на изменение пароля пользователя в базе данных
-    const changePassInDb = async (userId:number,currentPass:string,newPass:string) => {
+    const changePassInDb = async (userId: number, currentPass: string, newPass: string) => {
 
-        return $api.put('/changeAccPass',{userId,currentPass,newPass}); // возвращаем put запрос на сервер на эндпоинт /changeAccPass для изменения пароля пользователя и передаем вторым параметром объект с полями
+        return $api.put('/changeAccPass', { userId, currentPass, newPass }); // возвращаем put запрос на сервер на эндпоинт /changeAccPass для изменения пароля пользователя и передаем вторым параметром объект с полями
 
     }
 
@@ -205,29 +222,29 @@ const UserPage = () => {
 
 
     // функция для формы изменения пароля пользователя,указываем тип событию e как тип FormEvent и в generic указываем,что это HTMLFormElement(html элемент формы)
-    const onSubmitPassSettingsForm = async (e:FormEvent<HTMLFormElement>) => {
+    const onSubmitPassSettingsForm = async (e: FormEvent<HTMLFormElement>) => {
 
         e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
 
         // если инпут текущего пароля равен пустой строке,то показываем ошибку
-        if(inputPassCurrent === ''){
+        if (inputPassCurrent === '') {
             setErrorPasswordSettings('Enter current password');
-        }else if(inputPassNew.length < 3 || inputPassNew.length > 32){
+        } else if (inputPassNew.length < 3 || inputPassNew.length > 32) {
             // если инпут нового пароля меньше 3 или больше 32,то показываем ошибку
             setErrorPasswordSettings('New password must be 3 - 32 characters');
-        }else if(inputPassNew !== inputPassConfirm){
+        } else if (inputPassNew !== inputPassConfirm) {
             // если значение инпута нового пароля не равно значению инпута подтвержденного пароля,то показываем ошибку
             setErrorPasswordSettings('Passwords don`t match');
-        }else{
+        } else {
 
-            try{
+            try {
 
-                const response = await changePassInDb(user.id,inputPassCurrent,inputPassNew); // вызываем нашу функцию запроса на сервер для изменения пароля пользователя,передаем туда user.id(id пользователя) и значения инпутов текущего пароля и нового пароля
+                const response = await changePassInDb(user.id, inputPassCurrent, inputPassNew); // вызываем нашу функцию запроса на сервер для изменения пароля пользователя,передаем туда user.id(id пользователя) и значения инпутов текущего пароля и нового пароля
 
                 console.log(response.data);
 
 
-            }catch(e: any) {
+            } catch (e: any) {
 
                 console.log(e.response?.data?.message); // выводим ошибку в логи
 
@@ -246,6 +263,34 @@ const UserPage = () => {
     }
 
 
+    const changeInputPriceValue = (e: ChangeEvent<HTMLInputElement>) => {
+        
+        setInputPriceValue(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+        
+    }
+
+    const handlerMinusBtn = () => {
+        // если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля не отнимало - 1
+        if (inputPriceValue > 1) {
+            setInputPriceValue((prev) => prev - 1)
+        } else {
+            setInputPriceValue(1);
+        }
+    }
+
+    const handlerPlusBtn = () => {
+        // увеличиваем значение инпута на текущее + 1
+        setInputPriceValue((prev) => prev + 1)
+        
+    }
+
+
+    // функция для выбора картинки с помощью инпута для файлов
+    const inputLabelImageHandler = async (e:ChangeEvent<HTMLInputElement>) => {
+
+        console.log(e.target.files); // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов
+
+    }
 
 
     // если состояние загрузки true,то есть идет загрузка,то показываем лоадер(загрузку),если не отслеживать загрузку при функции checkAuth(для проверки на refresh токен при запуске страницы),то будет не правильно работать(только через некоторое время,когда запрос на /refresh будет отработан,поэтому нужно отслеживать загрузку и ее возвращать как разметку страницы,пока грузится запрос на /refresh)
@@ -290,10 +335,30 @@ const UserPage = () => {
                                     <img src="/images/sectionUserPage/dashboard 2.png" alt="" className="leftBar__list-img" />
                                     <p className={tab === 'dashboard' ? "leftBar__list-text leftBar__list-text--active" : "leftBar__list-text"}>Dashboard</p>
                                 </li>
-                                <li className={tab === 'settings' ? "leftBar__list-item leftBar__list-item--active" : "leftBar__list-item"} onClick={() => setTab('settings')}>
-                                    <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__list-img" />
-                                    <p className={tab === 'settings' ? "leftBar__list-text leftBar__list-text--active" : "leftBar__list-text"}>Settings</p>
-                                </li>
+
+                                {/* если user.role === 1(то есть если роль пользователя равна 1(а в данном случае равна "USER",так как значение в данном случае значение 1 соответствует значению "USER",это мы прописывали в node js для базы данных)),то показываем таб с настройками профиля пользователя */}
+                                {user.roleId === 1 &&
+
+                                    <li className={tab === 'settings' ? "leftBar__list-item leftBar__list-item--active" : "leftBar__list-item"} onClick={() => setTab('settings')}>
+                                        <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__list-img" />
+                                        <p className={tab === 'settings' ? "leftBar__list-text leftBar__list-text--active" : "leftBar__list-text"}>Settings</p>
+                                    </li>
+
+                                }
+
+                                {/* если user.role === 2(то есть если роль пользователя равна 2(а в данном случае равна "ADMIN",так как значение в данном случае значение 1 соответствует значению "ADMIN",это мы прописывали в node js для базы данных)),то показываем таб с настройками профиля пользователя */}
+
+                                {user.roleId === 2 &&
+
+                                    <li className={tab === 'adminPanel' ? "leftBar__list-item leftBar__list-item--active" : "leftBar__list-item"} onClick={() => setTab('adminPanel')}>
+                                        <img src="/images/sectionUserPage/dashboard 2 (1).png" alt="" className="leftBar__list-img" />
+                                        <p className={tab === 'adminPanel' ? "leftBar__list-text leftBar__list-text--active" : "leftBar__list-text"}>Admin Panel</p>
+                                    </li>
+
+                                }
+
+
+
                                 <li className="leftBar__list-item leftBar__list-itemLogout" onClick={logout}>
                                     <img src="/images/sectionUserPage/dashboard 2 (2).png" alt="" className="leftBar__list-img" />
                                     <p className="leftBar__list-text">Logout</p>
@@ -313,7 +378,9 @@ const UserPage = () => {
                                 </div>
                             }
 
-                            {tab === 'settings' &&
+
+                            {/* если user.role === 1(то есть если роль пользователя равна 1(а в данном случае равна "USER",так как значение в данном случае значение 1 соответствует значению "USER",это мы прописывали в node js для базы данных)) и tab === 'settings',то показываем таб с настройками профиля пользователя */}
+                            {user.roleId === 1 && tab === 'settings' &&
                                 <div className="sectionUserPage__settings">
                                     <form onSubmit={onSubmitFormSettings} className="settings__accountSettings">
                                         <h2 className="settings__accountSettings-title">Account Settings</h2>
@@ -355,7 +422,7 @@ const UserPage = () => {
                                                 </div>
                                                 <div className="settings__accountSettingsMain-item settings__passwordSettings-item">
                                                     <p className="accountSettingsMain__item-text">Confirm Password</p>
-                                                    <input type={passwordActiveConfirm ? "password" : "text"}  className="accountSettingsMain__item-input passwordSettings__item-input" placeholder="Confirm Password" value={inputPassConfirm} onChange={(e) => setInputPassConfirm(e.target.value)} />
+                                                    <input type={passwordActiveConfirm ? "password" : "text"} className="accountSettingsMain__item-input passwordSettings__item-input" placeholder="Confirm Password" value={inputPassConfirm} onChange={(e) => setInputPassConfirm(e.target.value)} />
                                                     <img src="/images/sectionUserForm/eye-open 1.png" alt="" className="login__passwordBlock-img passwordSettings__item-img" onClick={() => setPasswordActiveConfirm((prev) => !prev)} />
                                                 </div>
 
@@ -370,6 +437,98 @@ const UserPage = () => {
                                         </div>
                                     </form>
 
+                                </div>
+                            }
+
+
+                            {/* если user.role === 2(то есть если роль пользователя равна 1(а в данном случае равна "ADMIN",так как значение в данном случае значение 2 соответствует значению "ADMIN",это мы прописывали в node js для базы данных)) и tab === 'adminPanel',то показываем таб с панелью администратора */}
+                            {user.roleId === 2 && tab === 'adminPanel' &&
+                                <div className="sectionUserPage__settings">
+                                    <form className="settings__accountSettings">
+                                        <h2 className="settings__accountSettings-title">New Product</h2>
+                                        <div className="settings__accountSettingsMain">
+                                            <div className="settings__accountSettingsMain-item">
+                                                <p className="accountSettingsMain__item-text">Name</p>
+                                                <input type="text" className="accountSettingsMain__item-input" placeholder="Name" value={inputNameProduct} onChange={(e) => setInputNameProduct(e.target.value)} />
+                                            </div>
+
+
+                                            <div className="adminPanel__newProduct-selectsBlock">
+
+                                                <div className="adminPanel__newProduct-categoryBlock">
+                                                    <p className="accountSettingsMain__item-text">Category</p>
+                                                    <div className="selectBlock__select-inner" onClick={() => setSelectCategoryActive((prev) => !prev)}>
+                                                        <div className="selectBlock__select">
+                                                            <p className="selectBlock__select-text">{selectCategoryValue}</p>
+                                                            <img src="/images/sectionCatalog/Chevron Down.png" alt="" className={selectCategoryActive ? "selectBlock__select-img selectBlock__select-imgActive" : "selectBlock__select-img"} />
+                                                        </div>
+                                                        <div className={selectCategoryActive ? "selectBlock__optionsBlock select__optionsBlock--active select__adminPanelCategory--active" : "selectBlock__optionsBlock"}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue('Vegetables')}>
+                                                                <p className="optionsBlock__item-text">Vegetables</p>
+                                                            </div>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue('Cooking')}>
+                                                                <p className="optionsBlock__item-text">Cooking</p>
+                                                            </div>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue('Beauty & Health')}>
+                                                                <p className="optionsBlock__item-text">Beauty & Health</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="adminPanel__newProduct-categoryBlock">
+                                                    <p className="accountSettingsMain__item-text">Taste</p>
+                                                    <div className="selectBlock__select-inner" onClick={() => setSelectTasteActive((prev) => !prev)}>
+                                                        <div className="selectBlock__select">
+                                                            <p className="selectBlock__select-text">{selectTasteValue}</p>
+                                                            <img src="/images/sectionCatalog/Chevron Down.png" alt="" className={selectTasteActive ? "selectBlock__select-img selectBlock__select-imgActive" : "selectBlock__select-img"} />
+                                                        </div>
+                                                        <div className={selectTasteActive ? "selectBlock__optionsBlock select__optionsBlock--active select__adminPanelCategory--active" : "selectBlock__optionsBlock"}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue('Sweet')}>
+                                                                <p className="optionsBlock__item-text">Sweet</p>
+                                                            </div>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue('Spicy')}>
+                                                                <p className="optionsBlock__item-text">Spicy</p>
+                                                            </div>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue('Bitter')}>
+                                                                <p className="optionsBlock__item-text">Bitter</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                            <div className="settings__accountSettingsMain-item">
+                                                <p className="accountSettingsMain__item-text">Price</p>
+                                                <div className="info__CartBlock-inputBlock">
+                                                    <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnMinus" onClick={handlerMinusBtn}>
+                                                        <img src="/images/sectionProductsItemTop/Minus.png" alt="" className="inputBlock__inputBtn-img" />
+                                                    </div>
+                                                    <input type="number" className="CartBlock__inputBlock-input" onChange={changeInputPriceValue} value={inputPriceValue} />
+                                                    <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnPlus" onClick={handlerPlusBtn}>
+                                                        <img src="/images/sectionProductsItemTop/plus 1.png" alt="" className="inputBlock__inputBtn-img" />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="adminPanel__imageBlock">
+                                                <label htmlFor="inputFile" className="adminPanel__labelInputImage" >
+                                                    Load image
+                                                    {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа */}
+                                                    <input accept="image/*" type="file" id="inputFile" className="adminPanel__inputImage" onChange={inputLabelImageHandler} />
+                                                </label>
+                                            </div>
+
+
+                                            {/* если errNewProductForm true(то есть в состоянии errNewProductForm что-то есть),то показываем текст ошибки */}
+                                            {errNewProductForm && <p className="formErrorText">{errNewProductForm}</p>}
+
+                                            {/* указываем тип submit кнопке,чтобы она по клику активировала форму,то есть выполняла функцию,которая выполняется в onSubmit в форме */}
+                                            <button type="submit" className="settings__accountSettingsMain__btn">Save Product</button>
+                                        </div>
+                                    </form>
                                 </div>
                             }
 

@@ -2036,3 +2036,47 @@ a {
   font-weight: 400;
   font-family: 'Poppins',sans-serif;
 }
+
+.adminPanel__newProduct-categoryBlock{
+  display: flex;
+  flex-direction: column;
+}
+
+.select__adminPanelCategory--active{
+  max-height: 230px;
+}
+
+.adminPanel__newProduct-selectsBlock{
+  display: grid;
+  grid-template-columns: repeat(2,1fr);
+  gap: 50px;
+  margin-bottom: 16px;
+}
+
+.adminPanel__imageBlock{
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+.adminPanel__labelInputImage{
+  display: inline-block; /* ставим display inlice-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
+  background-color: #fff;
+  border: 2px solid #D5EDFD;
+  text-transform: uppercase;
+  color: #2DA5F3;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 16px 24px;
+  opacity: 1;
+  cursor: pointer;
+  transition: opacity .5s ease;
+}
+
+.adminPanel__labelInputImage:hover{
+  opacity: 0.7;
+}
+
+/* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,это label будет иметь такую же функию,как и это инпут */
+.adminPanel__inputImage{
+  display: none;
+}

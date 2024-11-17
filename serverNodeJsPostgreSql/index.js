@@ -20,6 +20,8 @@ import router from './router/router.js';
 import errorMiddleware from './middlewares/errorMiddleware.js';
 import cookieParser from 'cookie-parser'; // импортируем cookieParser
 
+import bcrypt from 'bcrypt'; // импортируем bcrypt для хеширования пароля(в данном случае импортируем вручную)
+
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
 const PORT = process.env.PORT || 5000; // указываем переменную PORT и даем ей значение как у переменной PORT из файла .env,если такой переменной нет,то указываем значение 5000
@@ -89,6 +91,14 @@ const start = async () => {
         // создали тестовые объекты токенов,в поле userId указали id объекта из таблицы User(то есть указали у какого пользователя этот refresh токен)
         // await models.Token.create({refreshToken:"j;ladjsf;lkajdflkja",userId:1});
         // await models.Token.create({refreshToken:"j;ladjsf;lkajdflkja2",userId:2});
+
+
+        // создаем объект пользователя в сущности users(пользователи) в базе данных 1 раз с ролью ADMIN,чтобы там он просто был и потом можно было только входить в аккаунт этого админа,после этого код закомментировали
+        // const hashPassword = await bcrypt.hash("adminShopery",3); // хешируем пароль с помощью функции hash() у bcrypt,первым параметром передаем пароль,а вторым - соль,степень хеширования(чем больше - тем лучше захешируется,но не нужно слишком большое число,иначе будет долго хешироваться пароль)
+
+        // const adminRole = await models.Role.findOne({where:{value:"ADMIN"}}); // получаем роль из базы данных со значением ADMIN и помещаем ее в переменную adminRole,изменяем значение value на ADMIN,чтобы зарегестрировать роль администратора,потом обратно возвращаем на USER
+
+        // const user = await models.User.create({email:"adminShopery@gmail.com",password:hashPassword,userName:"Admin",roleId:adminRole.id}); // создаем объект с полями email и password в базу данных и помещаем этот объект в переменную user,в поле password помещаем значение из переменной hashPassword,то есть уже захешированный пароль,и указываем в объекте еще поле userName,в поле roleId передаем значение значение роли,которое мы получили из базы данных выше(то есть передаем в поле roleId id объекта из таблицы Role,у которого поле value равно "USER"(мы поместили этот найденный объект в переменную userRole),то есть таким образом указываем пользователю роль "USER")
 
     }catch(e){
         console.log(e);

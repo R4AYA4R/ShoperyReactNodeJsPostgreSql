@@ -17,7 +17,7 @@ export default class UserDto{
 
         this.userName = model.userName;
 
-        this.role = model.role;
+        this.roleId = model.roleId; // изменяем переменную roleId этого класса на поле roleId у model(в этом поле будет значение id поля со значением роли пользователя в базе данных)
 
     }
 
