@@ -941,8 +941,12 @@ a {
   color: #1A1A1A;
 }
 
-.products__item-img {
+.products__item-img,
+.deals__item-img {
   align-self: center;
+  margin-bottom: 10px;
+  max-width: 264px;
+  max-height: 240px;
 }
 
 .sectionCatalog__notFoundText {
@@ -1017,6 +1021,8 @@ a {
 
 .sectionProductItemTop__img {
   justify-self: center;
+  max-width: 264px;
+  max-height: 240px;
 }
 
 .sectionProductItemTop__info-title {
@@ -1511,6 +1517,7 @@ a {
   max-width: 100px;
   opacity: 1;
   transition: all .5s ease;
+  max-height: 90px;
 }
 
 .tableCart__product-item {
@@ -2079,4 +2086,14 @@ a {
 /* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,это label будет иметь такую же функию,как и это инпут */
 .adminPanel__inputImage{
   display: none;
+}
+
+.adminPanel__previewImg{
+  display: block;
+  margin: 20px 0;
+  max-width: 270px;
+}
+
+.adminPanel__namePreviewImg{
+  margin: 15px 0;
 }

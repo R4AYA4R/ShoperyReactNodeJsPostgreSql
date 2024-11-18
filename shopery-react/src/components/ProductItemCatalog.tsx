@@ -11,7 +11,7 @@ const ProductItemCatalog = ({ product }: IProductItemCatalog) => {
 
     return (
         <div className="mainBlock__products-item" onClick={() => router(`/catalog/${product.id}`)}>
-            <img src={`/images/sectionDeals/${product.image}`} alt="" className="products__item-img" />
+            <img src={product.image} alt="" className="products__item-img" />
             <div className="deals__item-stars">
                 <img src={product.rating === 0 ? "/images/sectionDeals/Star 5.png" : "/images/sectionDeals/Star 4.png"} alt="" className="stars__itemOrange stars__ProductItemPage" />
                 <img src={product.rating >= 2 ? "/images/sectionDeals/Star 4.png" : "/images/sectionDeals/Star 5.png"} alt="" className="stars__itemOrange stars__ProductItemPage" />

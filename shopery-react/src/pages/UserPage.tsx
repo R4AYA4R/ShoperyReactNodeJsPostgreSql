@@ -3,7 +3,7 @@ import SectionUserTop from "../components/SectionUserTop";
 import UserFormComponent from "../components/UserFormComponent";
 import { useActions } from "../hooks/useActions";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { AuthResponse, IUpdateAccInfoObj, IUser } from "../types/types";
+import { AuthResponse, IProduct, IUpdateAccInfoObj, IUser } from "../types/types";
 import $api, { API_URL } from "../http/http";
 import { ChangeEvent, FormEvent, useEffect, useRef, useState } from "react";
 import AuthService from "../service/AuthService";
@@ -34,21 +34,27 @@ const UserPage = () => {
     const [errorPasswordSettings, setErrorPasswordSettings] = useState('');
 
 
-    const [inputNameProduct,setInputNameProduct] = useState('');
+    const [inputNameProduct, setInputNameProduct] = useState('');
 
-    const [selectCategoryValue, setSelectCategoryValue] = useState('');
+    const [selectCategoryValue, setSelectCategoryValue] = useState<number>(); // указываем состояние для значение селекта категорий и указываем начальное значение 0,так как будем изменять потом эти значение на 1,2 и тд,так как будем потом создавать новый товар в базе данных и указывать у него categoryId со значением,как у этого состояния
 
     const [selectCategoryActive, setSelectCategoryActive] = useState(false);
 
 
     const [selectTasteActive, setSelectTasteActive] = useState(false);
 
-    const [selectTasteValue, setSelectTasteValue] = useState('');
+    const [selectTasteValue, setSelectTasteValue] = useState<number>();
 
 
-    const [inputPriceValue,setInputPriceValue] = useState(0);
+    const [inputPriceValue, setInputPriceValue] = useState(1);
 
-    const [errNewProductForm,setErrNewProductForm] = useState('');
+    const [inputFile, setInputFile] = useState<File>();  // состояние для файла картинки продукта,которые пользователь выберет в инпуте для файлов,указываем тут тип any,чтобы не было ошибки,в данном случае указываем тип как File
+
+    const [imgPath, setImgPath] = useState(''); // состояние для пути картинки,который мы получим от сервера,когда туда загрузим картинку(чтобы отобразить выбранную пользователем картинку уже полученную от сервера, когда туда ее загрузим)
+
+    const newProductImage = useRef<HTMLImageElement>(null); // используем useRef для подключения к html тегу картинки нового товара,чтобы взять у него ширину и проверить ее,в generic типе этого useRef указываем,что в этом useRef будет HTMLImageElement(то есть картинка)
+
+    const [errNewProductForm, setErrNewProductForm] = useState('');
 
 
     const [tab, setTab] = useState('dashboard');
@@ -57,6 +63,17 @@ const UserPage = () => {
 
     const { checkAuthUser, setLoadingUser, logoutUser, setUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
 
+
+    // функция для post запроса на сервер с помощью useMutation(react query),создаем новый товар на сервере,берем mutate у useMutation,чтобы потом вызвать эту функцию запроса на сервер в нужный момент
+    const { mutate } = useMutation({
+        mutationKey: ['create productCatalog'],
+        mutationFn: async (product:IProduct) => {
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+            await $api.post<IProduct>(`${API_URL}/addNewProductCatalog`, product);
+        },
+
+
+    })
 
 
     // фукнция для запроса на сервер на изменение информации пользователя в базе данных,лучше описать эту функцию в сервисе(отдельном файле для запросов типа AuthService),например, но в данном случае уже описали здесь
@@ -264,9 +281,9 @@ const UserPage = () => {
 
 
     const changeInputPriceValue = (e: ChangeEvent<HTMLInputElement>) => {
-        
+
         setInputPriceValue(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
-        
+
     }
 
     const handlerMinusBtn = () => {
@@ -281,14 +298,147 @@ const UserPage = () => {
     const handlerPlusBtn = () => {
         // увеличиваем значение инпута на текущее + 1
         setInputPriceValue((prev) => prev + 1)
-        
+
     }
 
 
-    // функция для выбора картинки с помощью инпута для файлов
-    const inputLabelImageHandler = async (e:ChangeEvent<HTMLInputElement>) => {
 
-        console.log(e.target.files); // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов
+    // функция для выбора картинки с помощью инпута для файлов
+    const inputLoadImageHandler = async (e: ChangeEvent<HTMLInputElement>) => {
+
+        // e.target.files - массив файлов,которые пользователь выбрал при клике на инпут для файлов, если e.target.files true,то есть пользователь выбрал файл
+        if (e.target.files) {
+
+            setInputFile(e.target.files[0]); // помещаем в состояние файл,который выбрал пользователь,у files указываем тут [0],то есть берем первый элемент массива(по индексу 0) этих файлов инпута
+
+            const formData = new FormData(); // создаем объект на основе FormData(нужно,чтобы передавать файлы на сервер)
+
+            formData.append('image', e.target.files[0]); // добавляем в этот объект formData по ключу(названию) 'image' сам файл в e.target.files[0] по индексу 0 (первым параметром тут передаем название файла,вторым сам файл)
+
+            console.log(e.target.files[0]);
+
+            // оборачиваем в try catch,чтобы отлавливать ошибки и делаем пока такой запрос на сервер для загрузки файла на сервер,загружаем объект formData(лучше вынести это в отдельную функцию запроса на сервер но и так можно),указываем здесь наш инстанс axios ($api в данном случае),чтобы обрабатывать правильно запросы с access токеном и refresh токеном,в данном случае делаем запрос на бэкэнд для загрузки файла и там сразу будет проверка нашего authMiddleware на нашем node js сервере для проверки на access токен
+            try {
+
+                const response = await $api.post(`${API_URL}/uploadFile`, formData); // делаем запрос на сервер для сохранения файла на сервере и как тело запроса тут передаем formData
+
+                console.log(response);
+
+                setImgPath(`http://localhost:5000/${response.data.name}`); // помещаем в состояние imgPath путь до файла,то есть пишем путь до нашего сервера (http://localhost:5000/) в данном случае и добавляем название файла,который нужно показать,который есть в папке (в данном случае static) на нашем сервере,это название пришло от сервера
+
+                setErrNewProductForm(''); // убираем ошибку формы создания нового товара
+
+            } catch (e: any) {
+
+                return setErrNewProductForm(e.response?.data?.message); // возвращаем и показываем ошибку,используем тут return чтобы если будет ошибка,чтобы код ниже не работал дальше,то есть на этой строчке завершим функцию,чтобы не очищались поля инпутов,если есть ошибка
+
+            }
+
+        }
+
+    }
+
+
+    // функция для удаления файла на сервере,указываем тип fileName как string | undefined,так как иначен показывает ошибку,что нельзя передать параметр этой функции,если значение этого параметра undefined
+    const deleteFileRequest = async (fileName: string | undefined) => {
+
+        try {
+
+            const response = await axios.delete(`${API_URL}/deleteFile/${fileName}`); // делаем запрос на сервер для удаления файла на сервере и указываем в ссылке на эндпоинт параметр fileName,чтобы на бэкэнде его достать
+
+            console.log(response.data); // выводим в логи ответ от сервера
+
+            setImgPath(''); // изменяем состояние imgPath(пути картинки) на пустую строку,чтобы картинка не показывалась,если она не правильная по размеру и была удалена с сервера(иначе картинка показывается,даже если она удалена с сервера)
+
+        } catch (e: any) {
+            setErrNewProductForm(e.response?.data?.message);
+        }
+
+    }
+
+
+    // при изменении imgPath проверяем ширину и высоту картинки,которую выбрал пользователь(мы помещаем путь до картинки на нашем сервере node js в тег img и к этому тегу img привязали useRef с помощью которого берем ширину и высоту картинки)
+    useEffect(() => {
+
+        // используем тут setTimeout(код в этом callback будет выполнен через время,которое указали вторым параметром в setTimeout после запятой,это время указывается в миллисекундах,в данном случае этот код будет выполнен через 0.1 секунду(через 100 миллисекунд)),в данном случае это делаем для того,чтобы успела появится новая картинка,после того,как пользователь ее выбрал в ипнуте файлов,иначе не успевает появиться и показывает ширину картинки как 0
+        setTimeout(() => {
+
+            console.log(newProductImage.current?.width);
+            console.log(newProductImage.current?.height);
+
+            // imageNewProduct?.current true,то есть в этом useRef что-то есть(эта проверка просто потому что этот useRef может быть undefined и выдает ошибку об этом)
+            if (newProductImage?.current) {
+
+                if (newProductImage.current.width < 264 || newProductImage.current.height < 240) {
+                    // если newProductImage?.current?.width меньше 264(то есть если ширина картинки меньше 264 ),или если высота картинки меньше 240,то показываем ошибку
+
+                    setErrNewProductForm('Width of image must be more than 264px and height must be more than 240px');
+
+
+                    // делаем удаление файла на сервере,который не правильного размера ширины и высоты,так как если не удалять,а нужна конкретная ширина и высота картинки,то файлы будут просто скачиваться на наш node js сервер и не удаляться,поэтому отдельно делаем запрос на сервер на удаление файла
+                    deleteFileRequest(inputFile?.name); // передаем в нашу функцию название файла,который пользователь выбрал в инпуте файлов(мы поместили его в состояние inputFile),наша функция deleteFileRequest делает запрос на сервер на удаление файла и возвращает ответ от сервера(в данном случае при успешном запросе ответ от сервера будет объект с полями)
+
+                }
+
+            }
+
+        }, 100)
+
+    }, [imgPath])
+
+
+    const onSubmitNewProductAdminPanel = async (e: FormEvent<HTMLFormElement>) => {
+
+        e.preventDefault(); // убираем дефолтное поведение браузера при отправке формы(перезагрузка страницы),то есть убираем перезагрузку страницы в данном случае
+
+        // если значение инпута названия продукта,из которого убрали пробелы с помощью trim() равно пустой строке,то выводим ошибку(то есть если без пробелов это значение равно пустой строке,то показываем ошибку) или это значение меньше 3
+        if (inputNameProduct.trim() === '' || inputNameProduct.length < 3) {
+            setErrNewProductForm('Product name must be more than 3 characters');
+        } else if (selectCategoryValue === 0 || selectTasteValue === 0) {
+            // если состояния значений селектов категории и вкуса пустые,то показываем ошибку
+            setErrNewProductForm('Choose category and taste');
+        } else if (!inputFile) {
+            // если состояние файла false(или null),то есть его нет,то показываем ошибку
+            setErrNewProductForm('Choose product image');
+        } else if (newProductImage?.current && newProductImage.current.width < 264 || newProductImage?.current && newProductImage.current.height < 240) {
+            // если newProductImage?.current true(то есть в этом useRef что-то есть(эта проверка просто потому что этот useRef может быть undefined и выдает ошибку об этом)) и newProductImage?.current?.width меньше 264(то есть если ширина картинки меньше 264 ),или если newProductImage?.current true и высота картинки меньше 240,то показываем ошибку
+
+            setErrNewProductForm('Width of image must be more than 202px and height must be more than 172px');
+
+
+        } else {
+
+            // если состояние ошибки равно пустой строке,то есть ошибки нет
+            if (errNewProductForm === '') {
+
+                let priceFilter; // указываем переменную priceFilter,чтобы ее потом в зависимости от условий изменять
+
+                if (inputPriceValue < 10) {
+                    priceFilter = 'Under $10';
+                } else if (inputPriceValue >= 10 || inputPriceValue < 20) {
+                    priceFilter = '$10-$20';
+                } else if (inputPriceValue >= 20 || inputPriceValue < 30) {
+                    priceFilter = '$20-$30';
+                } else if (inputPriceValue >= 30) {
+                    priceFilter = 'Above $30';
+                }
+
+                // в image передаем путь до файла на нашем node js сервере,в данном случае мы помещаем этот путь в состояние imgPath
+                mutate({name:inputNameProduct,categoryId:selectCategoryValue,tasteId:selectTasteValue,price:inputPriceValue,priceFilter:priceFilter,amount:1,rating:0,totalPrice:inputPriceValue,image:imgPath} as IProduct); // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем тип этого объекта as IProduct(то есть как на основе нашего типа IProduct, в данном случае это для того,чтобы не было ошибки,что priceFilter может быть undefined)
+
+
+                setErrNewProductForm(''); // убираем ошибку формы
+
+                // очищаем инпуты формы создания нового товара
+                setInputNameProduct('');
+                setSelectCategoryValue(0);
+                setSelectTasteValue(0);
+                setInputPriceValue(1);
+                setImgPath(''); // указываем состоянию пути картинки пустую строку,чтобы когда пользователь сохранил новый товар,то картинка не показывалась уже
+
+            }
+
+        }
 
     }
 
@@ -444,7 +594,7 @@ const UserPage = () => {
                             {/* если user.role === 2(то есть если роль пользователя равна 1(а в данном случае равна "ADMIN",так как значение в данном случае значение 2 соответствует значению "ADMIN",это мы прописывали в node js для базы данных)) и tab === 'adminPanel',то показываем таб с панелью администратора */}
                             {user.roleId === 2 && tab === 'adminPanel' &&
                                 <div className="sectionUserPage__settings">
-                                    <form className="settings__accountSettings">
+                                    <form className="settings__accountSettings" onSubmit={onSubmitNewProductAdminPanel}>
                                         <h2 className="settings__accountSettings-title">New Product</h2>
                                         <div className="settings__accountSettingsMain">
                                             <div className="settings__accountSettingsMain-item">
@@ -459,17 +609,19 @@ const UserPage = () => {
                                                     <p className="accountSettingsMain__item-text">Category</p>
                                                     <div className="selectBlock__select-inner" onClick={() => setSelectCategoryActive((prev) => !prev)}>
                                                         <div className="selectBlock__select">
-                                                            <p className="selectBlock__select-text">{selectCategoryValue}</p>
+                                                            {/* если selectCategoryValue === 1(если состояние селекта категорий равно 1,то указываем один текст,в других случаях другой текст) */}
+                                                            <p className="selectBlock__select-text">{selectCategoryValue === 1 ? "Vegetables" : selectCategoryValue === 2 ? "Cooking" : selectCategoryValue === 3 ? "Beauty & Health" : ""}</p>
+
                                                             <img src="/images/sectionCatalog/Chevron Down.png" alt="" className={selectCategoryActive ? "selectBlock__select-img selectBlock__select-imgActive" : "selectBlock__select-img"} />
                                                         </div>
                                                         <div className={selectCategoryActive ? "selectBlock__optionsBlock select__optionsBlock--active select__adminPanelCategory--active" : "selectBlock__optionsBlock"}>
-                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue('Vegetables')}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue(1)}>
                                                                 <p className="optionsBlock__item-text">Vegetables</p>
                                                             </div>
-                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue('Cooking')}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue(2)}>
                                                                 <p className="optionsBlock__item-text">Cooking</p>
                                                             </div>
-                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue('Beauty & Health')}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectCategoryValue(3)}>
                                                                 <p className="optionsBlock__item-text">Beauty & Health</p>
                                                             </div>
                                                         </div>
@@ -480,17 +632,19 @@ const UserPage = () => {
                                                     <p className="accountSettingsMain__item-text">Taste</p>
                                                     <div className="selectBlock__select-inner" onClick={() => setSelectTasteActive((prev) => !prev)}>
                                                         <div className="selectBlock__select">
-                                                            <p className="selectBlock__select-text">{selectTasteValue}</p>
+                                                            {/* если selectTasteValue === 1(если состояние селекта вкусов равно 1,то указываем один текст,в других случаях другой текст) */}
+                                                            <p className="selectBlock__select-text">{selectTasteValue === 1 ? "Sweet" : selectTasteValue === 2 ? "Spicy" : selectTasteValue === 3 ? "Bitter" : ""}</p>
+
                                                             <img src="/images/sectionCatalog/Chevron Down.png" alt="" className={selectTasteActive ? "selectBlock__select-img selectBlock__select-imgActive" : "selectBlock__select-img"} />
                                                         </div>
                                                         <div className={selectTasteActive ? "selectBlock__optionsBlock select__optionsBlock--active select__adminPanelCategory--active" : "selectBlock__optionsBlock"}>
-                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue('Sweet')}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue(1)}>
                                                                 <p className="optionsBlock__item-text">Sweet</p>
                                                             </div>
-                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue('Spicy')}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue(2)}>
                                                                 <p className="optionsBlock__item-text">Spicy</p>
                                                             </div>
-                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue('Bitter')}>
+                                                            <div className="optionsBlock__item" onClick={() => setSelectTasteValue(3)}>
                                                                 <p className="optionsBlock__item-text">Bitter</p>
                                                             </div>
                                                         </div>
@@ -517,9 +671,17 @@ const UserPage = () => {
                                                 <label htmlFor="inputFile" className="adminPanel__labelInputImage" >
                                                     Load image
                                                     {/* указываем multiple этому инпуту для файлов,чтобы можно было выбирать несколько файлов одновременно для загрузки(в данном случае убрали multiple,чтобы был только 1 файл),указываем accept = "image/*",чтобы можно было выбирать только изображения любого типа */}
-                                                    <input accept="image/*" type="file" id="inputFile" className="adminPanel__inputImage" onChange={inputLabelImageHandler} />
+                                                    <input accept="image/*" type="file" id="inputFile" className="adminPanel__inputImage" onChange={inputLoadImageHandler} />
                                                 </label>
                                             </div>
+
+                                            {/* если imgPath не равно пустой строке,то показываем картинку */}
+                                            {imgPath !== '' &&
+                                                <>
+                                                    <img src={imgPath} alt="" className="adminPanel__previewImg" ref={newProductImage} />
+                                                    <p className="adminPanel__namePreviewImg">{inputFile?.name}</p> {/* указываем название файла у состояния inputFile у поля name,указываем здесь ? перед name,так как иначе ошибка,что состояние inputFile может быть undefined */}
+                                                </>
+                                            }
 
 
                                             {/* если errNewProductForm true(то есть в состоянии errNewProductForm что-то есть),то показываем текст ошибки */}

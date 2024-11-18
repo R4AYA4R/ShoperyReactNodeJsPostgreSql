@@ -111,7 +111,7 @@ const ProductItemCart = ({productBasket,refetchDataProductsCart}:IProductItemCar
     return (
         <div className="tableCart__product-item">
             <div className="tableCart__item-leftBlock">
-                <img src={`/images/sectionDeals/${productBasket.image}`} alt="" className="tableCart__item-img" />
+                <img src={productBasket.image} alt="" className="tableCart__item-img" />
                 <p className="tableCart__item-text">{productBasket.name}</p>
             </div>
             <p className="tableCart__item-price">${productBasket.price}</p>

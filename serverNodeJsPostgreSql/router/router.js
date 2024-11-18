@@ -38,6 +38,13 @@ router.put('/changeAccInfo',authMIddleware,body('email').isEmail(),userControlle
 router.put('/changeAccPass',authMIddleware,userController.changeAccPass); // создаем put запрос для изменения пароля пользователя в базе данных,вторым параметром указываем наш authMIddleware для проверки на access токен у пользователя,если он есть и он еще годен по сроку жизни этого токена(мы этот срок указали при создании токена),то будет выполнена функция changeAccPass,если нет,то не будет и будет ошибка 
 
 
+router.post('/uploadFile',authMIddleware,userController.uploadFile); // указываем post запрос для загрузки файла с фронтенда на наш node js сервер(в данном случае в папку static),вторым параметром указываем наш authMiddleware для проверки на access токен
+
+router.delete('/deleteFile/:fileName',userController.deleteFile);  // указываем delete запрос для удаления файла с нашего node js сервера(в данном случае из папки static),delete запрос не имеет тела запроса и все параметры передаются через строку,тут указываем через :(двоеточие) динамический параметр fileName,то есть этот параметр может меняться(в данном случае этот параметр нужен,чтобы удалить файл из папки static по этому названию fileName)
+
+router.post('/addNewProductCatalog',authMIddleware,userController.addProductToCatalog); // создаем post запрос для создания нового товара в базе данных
+
+
 router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min:3,max:32}),

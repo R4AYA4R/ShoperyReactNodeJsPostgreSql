@@ -22,11 +22,18 @@ import cookieParser from 'cookie-parser'; // импортируем cookieParser
 
 import bcrypt from 'bcrypt'; // импортируем bcrypt для хеширования пароля(в данном случае импортируем вручную)
 
+import fileUpload from 'express-fileupload'; // импортируем fileUpload для работы с загрузкой файлов 
+
 dotenv.config(); // используем config() у dotenv,чтобы работал dotenv и можно было использовать переменные окружения
 
 const PORT = process.env.PORT || 5000; // указываем переменную PORT и даем ей значение как у переменной PORT из файла .env,если такой переменной нет,то указываем значение 5000
 
 const app = express();  // создаем экземпляр нашего приложения с помощью express()
+
+// подключать этот fileUpload нужно в начале всех подключений use,или хотя бы выше,чем router,иначе не работает
+app.use(fileUpload({})); // регистрируем модуль fileUpload с помощью use(),чтобы он работал,передаем в fileUpload() объект
+
+app.use(express.static('static')); // делаем возможность отдавать изображение,то есть показывать изображение из папки static в браузере,когда,например, используем картинку,чтобы в src картинки можно было вставить путь до этой картинки на нашем node js сервере,и она показывалась
 
 app.use(cookieParser()); // подключаем cookieParser,чтобы работали cookie
 
