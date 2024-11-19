@@ -45,6 +45,9 @@ router.delete('/deleteFile/:fileName',userController.deleteFile);  // указы
 router.post('/addNewProductCatalog',authMIddleware,userController.addProductToCatalog); // создаем post запрос для создания нового товара в базе данных
 
 
+router.post('/deleteProductCatalog',authMIddleware,userController.deleteProductCatalog); // создаем post запрос на удаление товара из каталога для админа,делаем здесь post запрос,а не delete,так как нужно передать в тело запроса объект товара,который хотим удалить,чтобы брать у этого объекта нужные поля(но можно было сделать и delete запрос,только передавать нужные поля в url к эндпоинту,так как delete запрос не имеет тела запроса)
+
+
 router.post('/registration',
     body('email').isEmail(),
     body('password').isLength({min:3,max:32}),

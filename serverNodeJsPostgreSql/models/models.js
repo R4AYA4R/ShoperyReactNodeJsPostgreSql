@@ -101,7 +101,7 @@ const BasketProduct = db.define('basketProducts',{
 
     usualProductId:{type:DataTypes.INTEGER, allowNull:false}, // указываем это поля для объекта товара корзины,чтобы в это поле потом указывать значение id обычного товара из каталога,чтобы потом можно было перейти на страницу этого обычного товара из корзины
 
-    name:{type:DataTypes.STRING, unique:true, allowNull:false}, // указываем, что это поле уникально(unique:true),то есть другого такого же не может быть в этой таблице, и указываем этому полю еще свойство allowNull:false,то есть оно не может быть null(пустым)
+    name:{type:DataTypes.STRING, allowNull:false}, // не указываем этому полю,что оно уникально (unique:true),иначе у разных пользователей не будет добавляться одинаковый товар в корзину,то есть другого такого же не может быть в этой таблице, и указываем этому полю еще свойство allowNull:false,то есть оно не может быть null(пустым)
 
     price:{type:DataTypes.FLOAT, allowNull:false}, // указываем полю для цены тип DataTypes.FLOAT( float - тип данных числа с запятой(точкой),типа 0.5)
 

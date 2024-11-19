@@ -407,7 +407,7 @@ const Catalog = () => {
 
                                 {/* указываем если data?.data.rows.length true,то есть товары есть,то показываем их,в другом случае показываем текст,указываем так данные товара,потому что от сервера приходит объект(response) с многими полями, у этого объекта нужные нам данные хранятся в поле data,а у этого поля data есть еще 2 поля count(числов всех объектов товаров,которые пришли от сервера) и rows(где находится массив товаров для конкретной страницы,это мы делали для пагинации) */}
                                 {data?.data.rows.length ? data?.data.rows.map((product) =>
-                                    <ProductItemCatalog product={product} key={product.id} />)
+                                    <ProductItemCatalog product={product} key={product.id} refetchProductsCatalog={refetch} setPage={setPage}/>)
                                     : <h4 className="sectionCatalog__notFoundText">Not found</h4>
                                 }
 

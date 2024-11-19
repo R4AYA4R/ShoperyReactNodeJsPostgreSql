@@ -313,7 +313,7 @@ const ProductItemPage = () => {
             <section className={onScreen.sectionProductItemTopIntersecting ? "sectionProductItemTop sectionProductItemTop--active" : "sectionProductItemTop"} id="sectionProductItemTop" ref={sectionProductItemTopRef}>
                 <div className="container">
                     <div className="sectionProductItemTop__inner">
-                        <img src={data?.data.image} alt="" className="sectionProductItemTop__img" />
+                        <img src={`http://localhost:5000/${data?.data.image}`} alt="" className="sectionProductItemTop__img" />
                         <div className="sectionProductItemTop__info">
                             <h2 className="sectionProductItemTop__info-title">{data?.data.name}</h2>
                             <div className="deals__item-stars">

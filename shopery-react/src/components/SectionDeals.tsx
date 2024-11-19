@@ -13,8 +13,8 @@ const SectionDeals = () => {
     const onScreen = useIsOnScreen(sectionDealsRef);
 
     // делаем запрос на сервер с помощью react query при запуске страницы и описываем здесь функцию запроса на сервер
-    const {data} = useQuery({
-        queryKey:['getAllProducts'],
+    const {data,refetch} = useQuery({
+        queryKey:['getAllProducts'], // указываем здесь такое же название,как и в файле PopularProducts для получения товаров,это чтобы при удалении товара обновлялись данные автоматически сразу в другой компоненте(в данном случае в PopularProducts),а не после обновления страницы
         queryFn:async ()=>{
             const response = await axios.get<IProduct[]>('http://localhost:5000/api/getProducts',{
                 params:{
@@ -43,7 +43,7 @@ const SectionDeals = () => {
                     <div className="sectionDeals__deals">
 
                         {data?.data.map((product)=>
-                            <ProductItem product={product} key={product.id}/>
+                            <ProductItem product={product} key={product.id} refetchProductsCatalog={refetch}/>
                         )}
 
                     </div>

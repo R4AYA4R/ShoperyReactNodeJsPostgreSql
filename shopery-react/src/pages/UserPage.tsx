@@ -424,7 +424,7 @@ const UserPage = () => {
                 }
 
                 // в image передаем путь до файла на нашем node js сервере,в данном случае мы помещаем этот путь в состояние imgPath
-                mutate({name:inputNameProduct,categoryId:selectCategoryValue,tasteId:selectTasteValue,price:inputPriceValue,priceFilter:priceFilter,amount:1,rating:0,totalPrice:inputPriceValue,image:imgPath} as IProduct); // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем тип этого объекта as IProduct(то есть как на основе нашего типа IProduct, в данном случае это для того,чтобы не было ошибки,что priceFilter может быть undefined)
+                mutate({name:inputNameProduct,categoryId:selectCategoryValue,tasteId:selectTasteValue,price:inputPriceValue,priceFilter:priceFilter,amount:1,rating:0,totalPrice:inputPriceValue,image:inputFile.name} as IProduct); // поле id не указываем,чтобы оно сгенерировалось на сервере автоматически,указываем тип этого объекта as IProduct(то есть как на основе нашего типа IProduct, в данном случае это для того,чтобы не было ошибки,что priceFilter может быть undefined),указываем поле image как поле name у состояния inputFile(inputFile.name,то есть название файла,который выбрал пользователь),потом по этому с помощью этого поле image еще будем удалять картинку товара из папки на сервере при удалении товара из каталога
 
 
                 setErrNewProductForm(''); // убираем ошибку формы

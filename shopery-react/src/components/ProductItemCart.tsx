@@ -5,6 +5,7 @@ import { useActions } from "../hooks/useActions";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { API_URL } from "../http/http";
+import { useNavigate } from "react-router-dom";
 
 interface IProductItemCart{
     productBasket:IProductCart,
@@ -13,6 +14,8 @@ interface IProductItemCart{
 
 // берем пропс(параметр) refetchDataProductsCart из пропсов этого компонента,эту функцию refetchDataProductsCart передаем как пропс(параметр) в этот компонент в файле Cart.tsx,эта функция для обновления массива товаров корзины
 const ProductItemCart = ({productBasket,refetchDataProductsCart}:IProductItemCart) => {
+
+    const router = useNavigate(); // useNavigate может перемещатьтся на другую страницу вместо ссылок
 
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
@@ -111,8 +114,8 @@ const ProductItemCart = ({productBasket,refetchDataProductsCart}:IProductItemCar
     return (
         <div className="tableCart__product-item">
             <div className="tableCart__item-leftBlock">
-                <img src={productBasket.image} alt="" className="tableCart__item-img" />
-                <p className="tableCart__item-text">{productBasket.name}</p>
+                <img src={`http://localhost:5000/${productBasket.image}`} alt="" className="tableCart__item-img" onClick={()=>router(`/catalog/${productBasket.usualProductId}`)}/>
+                <p className="tableCart__item-text" onClick={()=>router(`/catalog/${productBasket.usualProductId}`)}>{productBasket.name}</p>
             </div>
             <p className="tableCart__item-price">${productBasket.price}</p>
             <div className="info__CartBlock-inputBlock">

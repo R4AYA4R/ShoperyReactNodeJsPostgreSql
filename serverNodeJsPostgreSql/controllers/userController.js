@@ -345,6 +345,48 @@ class UserController {
         }
     }
 
+
+    // функция для создания нового товара в базе данных
+    async deleteProductCatalog(req, res, next) {
+        // оборачиваем в блок try catch,чтобы отлавливать ошибки
+        try {
+
+            const productCatalog = req.body; // берем productCatalogId из параметров запроса(мы указали этот динамический параметр productId в url к эндпоинту,поэтому можем его взять из req.params)
+
+            // ищем все комментарии у которых productId равен id объекта товара,который нужно удалить,который мы взяли из тела запроса(productCatalog.id)
+            const commentsForDeletedProduct = await models.Comment.findAll({where:{productId:productCatalog.id}});
+
+            // если commentsForDeletedProduct true,то есть комментарии для товара,который нужно удалить есть,то их удаляем из базы данных
+            if(commentsForDeletedProduct){
+                await models.Comment.destroy({where:{productId:productCatalog.id}}); // удаляем все комментарии у который productId равен id удаленного товара,который хотим удалить,который взяли из тела запроса
+            }
+
+
+            // ищем все объекты товара в корзине у которых поле name равно полю name объекта товара,который хотим удалить(productCatalog.name)
+            const deletedProductCart = await models.BasketProduct.findAll({where:{name:productCatalog.name}});
+
+            // если deletedProductCart true,то есть товар,который нужно удалить есть в корзине пользователя,то его удаляем из корзины пользователя в базе данных
+            if(deletedProductCart){
+                await models.BasketProduct.destroy({where:{name:productCatalog.name}}); // удаляем все объекты товаров в корзине у которых поле name равно полю name объекта товара,который хотим удалить(productCatalog.name),указываем условие именно по полю name,так как нужно удалить все объекты этого товара у всех пользователей,потому что поле name у них одинаковое сохраняется в базе данных в таблице BasketProducts,но разные id и userId(это поле нужно,чтобы показать к какому пользователю этот товар принадлежит),поэтому так удаляем их у всех пользователей
+            }
+
+
+            const deletedProductCatalog = await models.Product.destroy({where:{id:productCatalog.id}}) // удаляем объект товара корзины у которого id равен id товара,который хотим удалить,который взяли из тела запроса(productCatalog.id)
+
+
+            const filePath = `${path.resolve()}\\static\\${productCatalog.image}`; // помещаем путь до файла,который хотим удалить в переменную filePath(здесь path.resolve() - берет текущую директорию(в данном случае директорию до \serverNodeJsPostgreSql) потом через слеши наша папка static в которой мы храним все скачанные файлы с фронтенда и еще через слеши указываем название файла,берем название файла картинки у поля image у productCatalog(у товара,который хотим удалить,который взяли из тела запроса))
+
+            fs.unlinkSync(filePath); // удаляем файл по такому пути,который находится в переменной filePath с помощью fs.unlinkSync(),у модуля fs для работы с файлами есть методы обычные(типа unlink) и Sync(типа unlinkSync), методы с Sync блокируют главный поток node js и код ниже этой строки не будет выполнен,пока не будет выполнен метод с Sync
+
+            return res.json(deletedProductCatalog); // возвращаем на клиент(фронтенд) удаленный объект товара
+
+
+
+        } catch (e) {
+            next(e); // вызываем функцию next()(параметр этой функции registration) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции registration,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+        }
+    }
+
 }
 
 export default new UserController(); // экспортируем уже объект на основе нашего класса UserController

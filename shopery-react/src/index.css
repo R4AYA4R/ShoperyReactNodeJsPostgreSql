@@ -2097,3 +2097,32 @@ a {
 .adminPanel__namePreviewImg{
   margin: 15px 0;
 }
+
+.sectionDeals__item2{
+  position: relative;
+}
+
+.productItem__deleteProductBtn{
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  z-index: 10;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:all .5s ease;
+}
+
+.productItem__deleteProductBtn:hover{
+  border: 1px solid red;
+}
+
+.productItem__deleteProductBtn-catalogProductBtn{
+  top: 10px;
+  right: 10px;
+}
