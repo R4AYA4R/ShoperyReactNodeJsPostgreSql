@@ -1015,6 +1015,57 @@ a {
   gap: 24px;
 }
 
+.sectionProductItemTop__priceBlock {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #E6E6E6;
+  margin-bottom: 24px;
+}
+
+.sectoinProductItemTop__deleteProductBtn {
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .5s ease;
+}
+
+.sectoinProductItemTop__deleteProductBtn:hover {
+  border: 1px solid red;
+}
+
+
+.sectionProductsItemTop__priceBlockChange {
+  display: flex;
+  align-items: end;
+  gap: 30px;
+}
+
+.sectionProductItemTop__priceBlockChange-btn {
+  padding: 13px 20px;
+  background-color: #00B207;
+  color: #fff;
+  border: none;
+  border-radius: 43px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  margin-top: 8px;
+  transition: all .5s ease;
+}
+
+.sectionProductItemTop__priceBlockChange-btn:hover{
+  background-color: #1c8f1f;
+}
+
 .stars__ProductItemPage {
   max-width: none;
 }
@@ -1036,10 +1087,6 @@ a {
   font-size: 24px;
   font-weight: 500;
   color: #2C742F;
-  margin-top: 10px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid #E6E6E6;
-  margin-bottom: 24px;
 }
 
 .categoryBlock__category-text {
@@ -1357,7 +1404,7 @@ a {
   color: #1A1A1A;
 }
 
-.reviews__leftBlock-item{
+.reviews__leftBlock-item {
   margin-bottom: 30px;
 }
 
@@ -1605,20 +1652,20 @@ a {
   padding: 24px;
 }
 
-.tableCart__bottomBlock-deleteBtn{
+.tableCart__bottomBlock-deleteBtn {
   padding: 14px 32px;
-  color:#fff;
+  color: #fff;
   background-color: #1A1A1A;
   border-radius: 43px;
   border: none;
-  font-family: 'Poppins',sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all .5s ease;
 }
 
-.tableCart__bottomBlock-deleteBtn:hover{
+.tableCart__bottomBlock-deleteBtn:hover {
   background-color: rgba(0, 0, 0, 0.2);
   color: #1A1A1A;
 }
@@ -1809,91 +1856,92 @@ a {
   margin-bottom: 5px;
 }
 
-.innerForLoader{
+.innerForLoader {
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 50px;
 }
 
-.loader{
+.loader {
   margin-top: 200px;
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  border:3px dashed #3589c2;
+  border: 3px dashed #3589c2;
   animation: rotate 1s infinite ease;
 }
 
 @keyframes rotate {
-  0%{
+  0% {
     transform: rotate(0deg) scale(1);
   }
-  100%{
+
+  100% {
     transform: rotate(360deg) scale(1.2);
   }
 }
 
 
-.sectionUserPage__inner{
+.sectionUserPage__inner {
   display: grid;
   grid-template-columns: 1fr 4fr;
-  gap:24px;
+  gap: 24px;
   align-items: start;
 }
 
-.sectionUserPage__leftBar{
+.sectionUserPage__leftBar {
   padding: 24px 0 12px;
   border: 1px solid #E6E6E6;
   border-radius: 8px;
 }
 
-.sectionUserPage__leftBar-title{
+.sectionUserPage__leftBar-title {
   font-size: 20px;
   font-weight: 500;
   color: #1A1A1A;
   margin: 0 0 16px 20px;
 }
 
-.leftBar__list{
+.leftBar__list {
   display: flex;
   flex-direction: column;
 }
 
-.leftBar__list-itemLogout{
+.leftBar__list-itemLogout {
   justify-self: end;
 }
 
-.leftBar__list-item{
+.leftBar__list-item {
   padding: 16px 0 16px 20px;
   display: flex;
   align-items: center;
-  gap:10px;
+  gap: 10px;
   cursor: pointer;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.leftBar__list-item:hover{
+.leftBar__list-item:hover {
   background-color: #dfdfdf;
 }
 
-.leftBar__list-item--active{
+.leftBar__list-item--active {
   background-color: #EDF2EE;
   border-left: 1px solid #20B526;
 }
 
-.leftBar__list-text{
+.leftBar__list-text {
   font-size: 16px;
   font-weight: 400;
   color: #707070;
-  transition:color .5s ease;
+  transition: color .5s ease;
 }
 
-.leftBar__list-text--active{
+.leftBar__list-text--active {
   color: #1A1A1A;
 }
 
-.sectionUserPage__dashboard-userInfo{
+.sectionUserPage__dashboard-userInfo {
   padding: 14px 0;
   border-radius: 8px;
   border: 1px solid #E6E6E6;
@@ -1903,7 +1951,7 @@ a {
   margin-bottom: 100px;
 }
 
-.dashboard__userInfo-name{
+.dashboard__userInfo-name {
   margin-top: 10px;
   font-size: 20px;
   font-weight: 500;
@@ -1911,71 +1959,71 @@ a {
   margin-bottom: 10px;
 }
 
-.dashboard__userInfo-email{
+.dashboard__userInfo-email {
   font-size: 14px;
   font-weight: 400;
   color: #808080;
   margin-bottom: 10px;
 }
 
-.dashboard__userInfo-btn{
+.dashboard__userInfo-btn {
   border: none;
   background-color: #fff;
   font-size: 16px;
   font-weight: 500;
   color: #00B207;
-  font-family: 'Poppins',sans-serif;
+  font-family: 'Poppins', sans-serif;
   cursor: pointer;
   opacity: 1;
   transition: opacity .5s ease;
 }
 
-.dashboard__userInfo-btn:hover{
+.dashboard__userInfo-btn:hover {
   opacity: 0.7;
 }
 
-.formErrorTextComments{
+.formErrorTextComments {
   color: #EE5858;
   font-weight: 400;
   font-size: 16px;
   margin-bottom: 16px;
 }
 
-.textAlreadyInCart{
+.textAlreadyInCart {
   font-size: 18px;
   font-weight: 600;
   color: #1A1A1A;
 }
 
-.textEmptyCart{
+.textEmptyCart {
   font-size: 18px;
   font-weight: 600;
   color: #1A1A1A;
   padding: 16px 20px;
 }
 
-.sectionUserPage__settings{
+.sectionUserPage__settings {
   margin-bottom: 80px;
 }
 
-.settings__accountSettings{
+.settings__accountSettings {
   border: 1px solid #E6E6E6;
   border-radius: 8px;
 }
 
-.settings__accountSettings-title{
-  color:#1A1A1A;
+.settings__accountSettings-title {
+  color: #1A1A1A;
   font-weight: 500;
   font-size: 20px;
   padding: 16px 24px;
   border-bottom: 1px solid #E6E6E6;
 }
 
-.settings__accountSettingsMain{
+.settings__accountSettingsMain {
   padding: 24px;
 }
 
-.accountSettingsMain__item-text{
+.accountSettingsMain__item-text {
   color: #1A1A1A;
   font-size: 14px;
   font-weight: 400;
@@ -1986,87 +2034,88 @@ a {
   margin-bottom: 16px;
 }
 
-.accountSettingsMain__item-input{
+.accountSettingsMain__item-input {
   padding: 14px 16px;
   border: 1px solid #E6E6E6;
   border-radius: 6px;
   outline: none;
 }
 
-.settings__accountSettingsMain__btn{
+.settings__accountSettingsMain__btn {
   background-color: #00B207;
   color: #fff;
   padding: 14px 32px;
   border: none;
   border-radius: 43px;
   cursor: pointer;
-  font-family: 'Poppins',sans-serif;
+  font-family: 'Poppins', sans-serif;
   font-size: 14px;
   font-weight: 600;
   margin-top: 8px;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.settings__accountSettingsMain__btn:hover{
+.settings__accountSettingsMain__btn:hover {
   background-color: #1c8f1f;
 }
 
-.settings__passwordSettings{
+.settings__passwordSettings {
   margin-top: 26px;
 }
 
-.settings__passwordSettings-item{
+.settings__passwordSettings-item {
   position: relative;
 }
 
-.passwordSettings__item-input{
+.passwordSettings__item-input {
   width: 100%;
   padding-right: 50px;
 }
 
-.settings__passwordSettingsMain-passwordsBlock{
+.settings__passwordSettingsMain-passwordsBlock {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, 1fr);
   align-items: center;
-  gap:16px;
+  gap: 16px;
 }
 
-.passwordSettings__item-img{
+.passwordSettings__item-img {
   top: 38px;
 }
 
 
 /* стилизуем placeholder для инпутов */
-.accountSettingsMain__item-input::placeholder{
+.accountSettingsMain__item-input::placeholder {
   color: #808080;
   font-size: 14px;
   font-weight: 400;
-  font-family: 'Poppins',sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
-.adminPanel__newProduct-categoryBlock{
+.adminPanel__newProduct-categoryBlock {
   display: flex;
   flex-direction: column;
 }
 
-.select__adminPanelCategory--active{
+.select__adminPanelCategory--active {
   max-height: 230px;
 }
 
-.adminPanel__newProduct-selectsBlock{
+.adminPanel__newProduct-selectsBlock {
   display: grid;
-  grid-template-columns: repeat(2,1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 50px;
   margin-bottom: 16px;
 }
 
-.adminPanel__imageBlock{
+.adminPanel__imageBlock {
   margin-top: 30px;
   margin-bottom: 20px;
 }
 
-.adminPanel__labelInputImage{
-  display: inline-block; /* ставим display inlice-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
+.adminPanel__labelInputImage {
+  display: inline-block;
+  /* ставим display inlice-block,чтобы этот label правильно располагался и имел правильные размеры,так как у него еще внутри есть текст  */
   background-color: #fff;
   border: 2px solid #D5EDFD;
   text-transform: uppercase;
@@ -2079,30 +2128,30 @@ a {
   transition: opacity .5s ease;
 }
 
-.adminPanel__labelInputImage:hover{
+.adminPanel__labelInputImage:hover {
   opacity: 0.7;
 }
 
 /* скрываем инпут с типом file,чтобы его не было видно,и стилизуем label который привязан к этому инпуту,это label будет иметь такую же функию,как и это инпут */
-.adminPanel__inputImage{
+.adminPanel__inputImage {
   display: none;
 }
 
-.adminPanel__previewImg{
+.adminPanel__previewImg {
   display: block;
   margin: 20px 0;
   max-width: 270px;
 }
 
-.adminPanel__namePreviewImg{
+.adminPanel__namePreviewImg {
   margin: 15px 0;
 }
 
-.sectionDeals__item2{
+.sectionDeals__item2 {
   position: relative;
 }
 
-.productItem__deleteProductBtn{
+.productItem__deleteProductBtn {
   position: absolute;
   top: 15px;
   right: 15px;
@@ -2115,14 +2164,14 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition:all .5s ease;
+  transition: all .5s ease;
 }
 
-.productItem__deleteProductBtn:hover{
+.productItem__deleteProductBtn:hover {
   border: 1px solid red;
 }
 
-.productItem__deleteProductBtn-catalogProductBtn{
+.productItem__deleteProductBtn-catalogProductBtn {
   top: 10px;
   right: 10px;
 }

@@ -9,7 +9,7 @@ import SectionProductItemPageTop from "../components/SectionProductItemPageTop";
 import PopularProducts from "../components/PopularProducts";
 import { useTypedSelector } from "../hooks/useTypedSelector";
 import { useActions } from "../hooks/useActions";
-import { API_URL } from "../http/http";
+import $api, { API_URL } from "../http/http";
 import { text } from "stream/consumers";
 
 const ProductItemPage = () => {
@@ -25,7 +25,7 @@ const ProductItemPage = () => {
     const [textFormArea, setTextFormArea] = useState('');
 
     const [inputAmountValue, setInputAmountValue] = useState<number>(1);
- 
+
     const sectionProductItemTopRef = useRef(null);
 
     const onScreen = useIsOnScreen(sectionProductItemTopRef);
@@ -47,7 +47,13 @@ const ProductItemPage = () => {
     })
 
 
-    const [totalPriceProduct,setTotalPriceProduct] = useState(data?.data.price);
+    const [totalPriceProduct, setTotalPriceProduct] = useState(data?.data.price);
+
+
+    // указываем первоначальное значение этому состоянию inputValuePriceChange как totalPriceProduct,чтобы в инпуте изменения цены товара изначально было значение как у totalPriceProduct(текущее значение цены товара)
+    const [inputValuePriceChange, setInputValuePriceChange] = useState(data?.data.price);
+
+    const [tabChangePrice, setTabChangePrice] = useState(false); // делаем состояние для таба изменения цены товара для админа(будем показывать или не показывать инпут изменения цены товара в зависимости от этого состояния)
 
 
     const { data: dataComments, refetch: refetchComments } = useQuery({
@@ -90,12 +96,24 @@ const ProductItemPage = () => {
     })
 
 
+    // функция мутации(изменения данных) для изменения цены товара(она будет для админа)
+    const { mutate: mutatePriceProduct } = useMutation({
+        mutationKey: ['updatePriceProduct'],
+        mutationFn: async (product: IProduct | undefined) => {
+            // делаем запрос на сервер и добавляем данные на сервер,указываем тип данных,которые нужно добавить на сервер(в данном случае IProduct),но здесь не обязательно указывать тип,передаем просто объект product как тело запроса,используем тут наш инстанс axios ($api),чтобы правильно обрабатывался этот запрос для проверки на access токен с помощью нашего authMiddleware на нашем сервере
+            await $api.put<IProduct>(`${API_URL}/changePriceProductCatalog`, product);
+        },
+
+        // при успешной мутации(изменения) рейтинга,переобновляем данные товара
+        onSuccess() {
+            refetch();
+            setTabChangePrice(false); // изменяем значение tabChangePrice на false,чтобы убрать инпут для изменения цены товара
+        }
+    })
+
     const { isAuth, user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
     const { checkAuthUser, setLoadingUser } = useActions(); // берем actions для изменения состояния пользователя у слайса(редьюсера) userSlice у нашего хука useActions уже обернутые в диспатч,так как мы оборачивали это в самом хуке useActions
-
-
-  
 
 
 
@@ -130,16 +148,49 @@ const ProductItemPage = () => {
     }
 
     // при изменении inputAmountValue и data?.data(в данном случае данные товара на этой странице,полученные с сервера,чтобы при запуске страницы сайта уже было значение в totalPriceProduct,без этого стартовое значение totalPriceProduct не становится на data?.data.price) изменяем состояние totalPriceProduct
-    useEffect(()=>{
+    useEffect(() => {
 
         // если data?.data.price true(то есть она есть),то меняем значение totalPriceProduct,в данном случае делаем эту проверку,так как выдает ошибку,что data?.data.price может быть undefined(то есть ее может не быть)
-        if(data?.data.price){
+        if (data?.data.price) {
 
             setTotalPriceProduct(data?.data.price * inputAmountValue);
 
         }
 
-    },[inputAmountValue,data?.data])
+        setInputValuePriceChange(data?.data.totalPrice); // изменяем значение состояния inputValuePriceChange на data?.data.totalPrice(текущая цена товара),делаем это при изменении data?.data в этом useEffect,чтобы значение этого состояния при загрузке страницы ставилось на data?.data.totalPrice(текущее значение цены товара),иначе при загрузке страницы не ставится значение на data?.data.totalPrice
+
+    }, [inputAmountValue, data?.data])
+
+
+
+    // функция для изменения инпута цены товара для админа
+    const changeInputValuePriceChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+        if (+e.target.value <= 0) {
+            // если текущее значение инпута < или равно 0,то ставим значение инпуту 0,чтобы меньше 0 не уменьшалось
+            setInputValuePriceChange(0);
+        } else {
+            setInputValuePriceChange(+e.target.value); // изменяем состояние инпута цены на текущее значение инпута,указываем + перед e.target.value,чтобы перевести текущее значение инпута из строки в число
+        }
+    }
+
+    // функция для изменения инпута цены товара по кнопке минус для админа
+    const handlerMinusBtnPriceChange = () => {
+        // если inputValuePriceChange true(делаем эту проверку,так как показывает ошибку,что это значение может быть undefined) и если значение инпута количества товара больше 1,то изменяем это значение на - 1,в другом случае указываем ему значение 1,чтобы после нуля не отнимало - 1
+        if (inputValuePriceChange && inputValuePriceChange > 1) {
+            // изменяем текущее значение инпута цены на - 1
+            setInputValuePriceChange((prev) => prev && prev - 1); // если prev true(prev &&),то указываем значение состоянию inputValuePriceChange prev - 1, делаем проверку если prev true,иначе показывает ошибку,что prev(текущее значение inputValuePriceChange) может быть undefined
+        } else {
+            setInputValuePriceChange(1);
+        }
+    }
+
+    // функция для изменения инпута цены товара по кнопке плюс для админа
+    const handlerPlusBtnPriceChange = () => {
+        // изменяем текущее значение инпута цены на + 1
+        setInputValuePriceChange((prev) => prev && prev + 1); // если prev true(prev &&),то указываем значение состоянию inputValuePriceChange prev + 1, делаем проверку если prev true,иначе показывает ошибку,что prev(текущее значение inputValuePriceChange) может быть undefined
+
+    }
 
 
     // при изменении pathname(url страницы),делаем запрос на обновление данных о товаре(иначе не меняются данные) и изменяем таб на desc(описание товара),если вдруг был включен другой таб,то при изменении url страницы будет включен опять дефолтный таб,также изменяем значение количества товара,если было выбрано уже какое-то,чтобы поставить первоначальное, и убираем форму добавления комментария,если она была открыта
@@ -197,7 +248,7 @@ const ProductItemPage = () => {
     }, [])
 
 
-    const { data: dataProductsCart,refetch:dataProductsCartRefetch } = useQuery({
+    const { data: dataProductsCart, refetch: dataProductsCartRefetch } = useQuery({
         queryKey: ['productsCart'],
         queryFn: async () => {
             // делаем запрос на сервер на получение всех товаров корзины,указываем тип данных,которые придут от сервера(тип данных на основе нашего интерфеса IProductCart,и указываем,что это массив IProductCart[]),указываем query параметр userId со значением id пользователя,чтобы получать товары корзины для конкретного авторизованного пользователя
@@ -215,7 +266,7 @@ const ProductItemPage = () => {
         },
 
         // при успешной мутации,то есть в данном случае при успшешном добавлении товара в корзину обновляем dataProductsCart(массив объектов корзины),чтобы сразу показывалось изменение в корзине товаров,если так не сделать,то текст Already in Cart(что товар уже в корзине) будет показан только после обновления страницы,а не сразу,так как массив объектов корзины еще не переобновился
-        onSuccess(){
+        onSuccess() {
             dataProductsCartRefetch();
         }
     })
@@ -293,15 +344,15 @@ const ProductItemPage = () => {
         console.log(user.userName)
 
         // если имя пользователя равно true,то есть оно есть и пользователь авторизован,то помещаем товар в корзину,в другом случае перекидываем пользователя на страницу авторизации
-        if(user.userName){
+        if (user.userName) {
 
-            if(data?.data){
+            if (data?.data) {
 
-                mutateAddProductCart({name:data.data.name,categoryId:data.data.categoryId,amount:inputAmountValue,image:data.data.image,price:data.data.price,priceFilter:data.data.priceFilter,rating:data.data.rating,tasteId:data.data.tasteId,totalPrice:totalPriceProduct,usualProductId:data.data.id,userId:user.id} as IProductCart); // передаем в addProductBasket объект типа IProductCart только таким образом,разворачивая в объект все необходимые поля(то есть наш product,в котором полe name,делаем поле name со значением,как и у этого товара name(data?.data.name) и остальные поля также,кроме поля amount и totalPrice,их мы изменяем и указываем как значения inputAmountValue(инпут с количеством) и totalPriceProduct(состояние цены,которое изменяется при изменении inputAmountValue)),указываем тип этого объекта как созданный нами тип as IProductCart,при создании на сервере не указываем конкретное значение id,чтобы он сам автоматически генерировался на сервере и потом можно было удалить этот объект, добавляем поле userId со значением user.id(то есть со значением id пользователя,чтобы потом показывать товары в корзине для каждого конкретного пользователя,у которого id будет равен полю userId у этого товара),указываем usualProductId со значением data?.data.id,чтобы потом в корзине можно было перейти на страницу товара в магазине по этому usualProductId,а сам id корзины товара не указываем,чтобы он автоматически правильно генерировался,так как делаем показ товаров по-разному для конкретных пользователей(то есть как и должно быть),иначе ошибка
+                mutateAddProductCart({ name: data.data.name, categoryId: data.data.categoryId, amount: inputAmountValue, image: data.data.image, price: data.data.price, priceFilter: data.data.priceFilter, rating: data.data.rating, tasteId: data.data.tasteId, totalPrice: totalPriceProduct, usualProductId: data.data.id, userId: user.id } as IProductCart); // передаем в addProductBasket объект типа IProductCart только таким образом,разворачивая в объект все необходимые поля(то есть наш product,в котором полe name,делаем поле name со значением,как и у этого товара name(data?.data.name) и остальные поля также,кроме поля amount и totalPrice,их мы изменяем и указываем как значения inputAmountValue(инпут с количеством) и totalPriceProduct(состояние цены,которое изменяется при изменении inputAmountValue)),указываем тип этого объекта как созданный нами тип as IProductCart,при создании на сервере не указываем конкретное значение id,чтобы он сам автоматически генерировался на сервере и потом можно было удалить этот объект, добавляем поле userId со значением user.id(то есть со значением id пользователя,чтобы потом показывать товары в корзине для каждого конкретного пользователя,у которого id будет равен полю userId у этого товара),указываем usualProductId со значением data?.data.id,чтобы потом в корзине можно было перейти на страницу товара в магазине по этому usualProductId,а сам id корзины товара не указываем,чтобы он автоматически правильно генерировался,так как делаем показ товаров по-разному для конкретных пользователей(то есть как и должно быть),иначе ошибка
 
             }
 
-        }else{
+        } else {
             router('/user'); // перекидываем пользователя на страницу авторизации (/user в данном случае)
         }
 
@@ -330,7 +381,52 @@ const ProductItemPage = () => {
                                 }
 
                             </div>
-                            <p className="sectionProductItemTop__info-price">${totalPriceProduct}</p>
+
+                            <div className="sectionProductItemTop__priceBlock">
+
+                                {/* если состояние таба tabChangePrice false,то показываем цену товара и кнопку,чтобы изменить цену товара,если это состояние tabChangePrice будет равно true,то этот блок показываться не будет */}
+                                {!tabChangePrice &&
+                                    <>
+                                        <p className="sectionProductItemTop__info-price">${totalPriceProduct}</p>
+
+                                        {/* если user.roleId равно 2,то есть если пользователь зарегестрировался как администратор,то показываем кнопку изменения цены товара */}
+                                        {user.roleId === 2 &&
+                                            <button className="sectoinProductItemTop__deleteProductBtn" onClick={() => setTabChangePrice(true)}>
+                                                <img src="/images/sectionCart/Close.png" alt="" className="productItem__deleteProductBtn-img" />
+                                            </button>
+
+                                        }
+
+                                    </>
+                                }
+
+
+                                {/* если состояние таба tabChangePrice true,то показываем блок с инпутом изменения цены товара,в другом случае он показан не будет */}
+                                {tabChangePrice &&
+                                    <div className="sectionProductsItemTop__priceBlockChange">
+                                        <div className="sectionProductsItemTop__priceBlockChange-inputBlock">
+                                            <p className="accountSettingsMain__item-text">Price</p>
+
+                                            <div className="info__CartBlock-inputBlock">
+                                                <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnMinus" onClick={handlerMinusBtnPriceChange}>
+                                                    <img src="/images/sectionProductsItemTop/Minus.png" alt="" className="inputBlock__inputBtn-img" />
+                                                </div>
+                                                <input type="number" className="CartBlock__inputBlock-input" onChange={changeInputValuePriceChange} value={inputValuePriceChange} />
+                                                <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnPlus" onClick={handlerPlusBtnPriceChange}>
+                                                    <img src="/images/sectionProductsItemTop/plus 1.png" alt="" className="inputBlock__inputBtn-img" />
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+                                        {/* в onClick(по клику на кнопку) вызываем функцию мутации(изменения данных) для изменения цены товара и передаем туда объект товара(data?.data) и изменяем у него поля price и totalPrice на значение состояния inputValuePriceChange(измененную цену товара) */}
+                                        <button className="sectionProductItemTop__priceBlockChange-btn" onClick={()=>mutatePriceProduct({...data?.data,price:inputValuePriceChange,totalPrice:inputValuePriceChange} as IProduct)}>Save Changes</button>
+                                    </div>
+                                }
+
+
+                            </div>
+
                             <div className="sectionProductItemTop__info-categoryBlock">
                                 <div className="categoryBlock__category">
                                     <p className="categoryBlock__category-text">Category:</p>
@@ -360,7 +456,7 @@ const ProductItemPage = () => {
                                 {/* если isExistsBasket true(то есть этот товар на этой странице уже находится в корзине) и если user.userName true(то есть пользователь авторизован,если не сделать эту проверку на авторизован ли пользователь,то после выхода из аккаунта и возвращении на страницу корзины товары будут показываться до тех пор,пока не обновится страница,поэтому делаем эту проверку),то показываем текст,в другом случае показываем кнопку добавления товара в корзину и инпут с количеством этого товара */}
                                 {user.userName && isExistsBasket ?
                                     <h3 className="textAlreadyInCart">Already in Cart</h3>
-                                    : 
+                                    :
                                     <>
                                         <div className="info__CartBlock-inputBlock">
                                             <div className="CartBlock__inputBlock-inputBtn CartBlock__inputBlock-inputBtnMinus" onClick={handlerMinusBtn}>

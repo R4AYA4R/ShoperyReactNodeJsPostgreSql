@@ -387,6 +387,40 @@ class UserController {
         }
     }
 
+
+    // функция для изменения цены товара каталога(эта функция будет для админа)
+    async changePriceProductCatalog(req, res, next) {
+        // оборачиваем в блок try catch,чтобы отлавливать ошибки
+        try {
+
+            const productCatalog = req.body; // достаем(деструктуризируем) из тела запроса весь объект запроса со всеми полями,которые мы передали с фронтенда(не используем здесь деструктуризацию типа деструктурировать из req.body {productCatalog} в квадратных скобках,так как просто берем все тело запроса,то есть весь объект тела запроса,а не отдельные поля)
+
+            const foundedProductCatalog = await models.Product.findOne({where:{id:productCatalog.id}}); // ищем объект товара каталога у которого id равен id товара,который мы взяли из тела запроса(productCatalog.id)
+
+            foundedProductCatalog.price = productCatalog.price; // изменяем поле price у foundeProductCatalog(у товара каталога) на значение поля price у productCatalog(объект товара,который мы взяли из тела запроса)
+
+            foundedProductCatalog.totalPrice = productCatalog.totalPrice; // изменяем поле totalPrice у foundeProductCatalog(у товара каталога) на значение поля totalPrice у productCatalog(объект товара,который мы взяли из тела запроса)
+
+            await foundedProductCatalog.save(); // сохраняем объект товара каталога в базе данных
+
+            const foundedProductCart = await models.BasketProduct.findAll({where:{name:productCatalog.name}}); // ищем все объекты товаров у которых name равен полю name у productCatalog(объект товара,который мы взяли из тела запроса),ищем эти объекты товаров по полю name,так как поле name может быть одинаковое у товаров в корзине,но у разных пользователей,поэтому находим все
+
+
+            // если foundedProductCart true,то есть объекты товаров в корзине были найдены
+            if(foundedProductCart){
+
+                const updatedProductsCart = await models.BasketProduct.update({price:productCatalog.price,totalPrice:productCatalog.totalPrice},{where:{name:productCatalog.name}}); // изменяем поля price и totalPrice у объектов товаров корзины в базе данных,у которых поле name равное полю name у productCatalog(объект товара,который мы взяли из тела запроса) и помещаем эти измененные товара в переменную updatedProductsCart
+
+            }
+            
+            return res.json(foundedProductCatalog); // возвращаем на клиент измененный объект товара каталога 
+            
+
+        } catch (e) {
+            next(e); // вызываем функцию next()(параметр этой функции registration) и туда передаем ошибку,в этот next() попадает ошибка,и если ошибка будет от нашего класса ApiError(наш класс обработки ошибок,то есть когда мы будем вызывать функцию из нашего класса ApiError для обработки определенной ошибки,то эта функция будет возвращать объект с полями message и тд,и этот объект будет попадать в эту функцию next(в наш errorMiddleware) у этой нашей функции registration,и будет там обрабатываться),то она будет там обработана с конкретным сообщением,которое мы описывали,если эта ошибка будет не от нашего класса ApiError(мы обрабатывали какие-то конкретные ошибки,типа UnauthorizedError,ошибки при авторизации и тд),а какая-то другая,то она будет обработана как обычная ошибка(просто выведена в логи,мы это там прописали),вызывая эту функцию next(),мы попадаем в наш middleware error-middleware(который подключили в файле index.js)
+        }
+    }
+
 }
 
 export default new UserController(); // экспортируем уже объект на основе нашего класса UserController
