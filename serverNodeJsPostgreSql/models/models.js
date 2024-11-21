@@ -118,6 +118,16 @@ const BasketProduct = db.define('basketProducts',{
 })
 
 
+// создаем сущность(таблицу) для полей(текста и тд) на сайте,которые сможет изменять админ
+const AdminFields = db.define('adminFields',{
+
+    id:{type:DataTypes.INTEGER,primaryKey:true,autoIncrement:true},
+
+    phoneNumber:{type:DataTypes.STRING,allowNull:false} // создаем поле для номера телефона с типом STRING и allowNull false(что это поле не может быть пустым)
+
+})
+
+
 
 // описываем связи между таблицами, hasMany(связь 1 ко многим,типа один объект этой таблицы может иметь связь с многими объектами другой таблицы), hasOne - связь 1 к 1(один объект этой таблицы может иметь одну связь(то есть будет отдельное поле у объекта одной таблицы, в котором будет указан id объекта другой таблицы,который принадлежит этой таблице) с объектом другой таблицы)
 
@@ -170,5 +180,6 @@ export default {
     Role,
     Token,
     Comment,
-    BasketProduct
+    BasketProduct,
+    AdminFields
 }

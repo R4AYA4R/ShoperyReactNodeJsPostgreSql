@@ -104,7 +104,7 @@ const ProductItemPage = () => {
             await $api.put<IProduct>(`${API_URL}/changePriceProductCatalog`, product);
         },
 
-        // при успешной мутации(изменения) рейтинга,переобновляем данные товара
+        // при успешной мутации(изменения) цены товара,переобновляем данные товара
         onSuccess() {
             refetch();
             setTabChangePrice(false); // изменяем значение tabChangePrice на false,чтобы убрать инпут для изменения цены товара
