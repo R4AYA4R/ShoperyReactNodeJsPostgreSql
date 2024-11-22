@@ -91,9 +91,12 @@ const Header = () => {
                         <li className="header__menuList-item">
                             <NavLink to="/catalog" className={({ isActive }) => isActive ? "menuList__item-link menuList__item-linkActive" : "menuList__item-link"}>Catalog</NavLink>
                         </li>
+
+                        {/* сделали ссылку на страницу aboutUs как обычную ссылку-заглушку,чтобы текст About Us был виден,но на эту страницу не переходило,так как в данном случае не сделали страницу About Us */}
                         <li className="header__menuList-item">
-                            <NavLink to="/aboutUs" className={({ isActive }) => isActive ? " menuList__item-linkActive" : "menuList__item-link"}>About Us</NavLink>
+                            <a href="#" className="menuList__item-link">About Us</a>
                         </li>
+
                         <li className="header__menuList-item menuList__item-cartAndUser">
                             <NavLink to="/cart" className="menuList__item-link menuList__item-linkCart">
                                 <img src="/images/header/Rectangle.png" alt="" className="menuList__item-cartImg" />
