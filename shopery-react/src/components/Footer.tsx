@@ -4,15 +4,14 @@ import $api, { API_URL } from "../http/http";
 import { IAdminFields } from "../types/types";
 import axios from "axios";
 import { useTypedSelector } from "../hooks/useTypedSelector";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Footer = () => {
 
     const [tabChangeTel, setTabChangeTel] = useState(false); // делаем состояние для таба изменения номера телефона для админа(будем показывать или не показывать инпут изменения номера телефона в зависимости от этого состояния)
 
     
-    const [inputChangeTel,setInputChangeTel] = useState(''); // делаем состояние для инпута изменения телефона и указываем ему первоначальное значение,как предыдущий номер телефона,чтобы при показе инпут изменения номера телефона в нем изначально было значение предыдущего номера телефона,которое можно стереть
-
+    const [inputChangeTel,setInputChangeTel] = useState<string | undefined>(''); // делаем состояние для инпута изменения телефона и указываем ему тип данных как string | (или) undefined(указываем ему,что он может быть  undefined,чтобы не было ошибки,что это состояние не может быть undefined,когда задаем ему первоначальное значение как dataAdminFields?.data.phoneNumber(поле номера телефона из объекта админ полей из базы данных)
 
     const { user } = useTypedSelector(state => state.userSlice); // указываем наш слайс(редьюсер) под названием userSlice и деструктуризируем у него поле состояния isAuth,используя наш типизированный хук для useSelector
 
@@ -44,6 +43,13 @@ const Footer = () => {
         }
     })
 
+
+    // при изменении dataAdminFields?.data(объекта админ полей) изменяем состояние inputChangeTel на dataAdminFields?.data.phoneNumber(поле номера телефона из объекта админ полей,который взяли из базы данных),делаем этот useEffect,чтобы при загрузке страницы первоначальное значение состояния inputChangeTel было как dataAdminFields?.data.phoneNumber,чтобы при показе инпута изменения номера телефона для админа,там сразу было значение dataAdminFields?.data.phoneNumber(поле номера телефона из базы данных),которое можно стереть,если не сделать этот useEffect,то первоначальное значение состояния inputChangeTel не будет задано
+    useEffect(()=>{
+
+        setInputChangeTel(dataAdminFields?.data.phoneNumber);
+
+    },[dataAdminFields?.data])
 
     return (
         <footer className="footer">
